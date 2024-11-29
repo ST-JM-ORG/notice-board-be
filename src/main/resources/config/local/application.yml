@@ -1,0 +1,32 @@
+spring:
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
+    mapper.accept-case-insensitive-properties: true
+  http:
+    encoding: charset=UTF-8
+    enabled: true
+    force: true
+  devtools.livereload.enabled: false
+  mvc:
+    servlet:
+      load-on-startup: 1
+  jpa:
+    hibernate:
+      ddl-auto: create
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/notice_board?serverTimezone=Asia/Seoul
+    username: id
+    password: "pw"
+    hikari:
+      auto-commit: true
+
+project:
+  file:
+    upload:
+      path: C:/Users/JM/Desktop/project/UPLOAD/notice-board-be/
+  log:
+    absolute-path: C:/Users/JM/Desktop/project/logs/notice-board-be/
+    file-max-history: 7
+    level: debug

@@ -1,0 +1,29 @@
+spring:
+  application.name: notice-board
+  config:
+    import: optional:classpath:config/${spring.profiles.active:local}/application.yml
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 1000MB
+  main:
+    allow-bean-definition-overriding: true
+
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+    session:
+      #      timeout: 1800
+      tracking-modes: cookie
+
+  forward-headers-strategy: framework
+  error:
+    include-exception: true
+    include-stacktrace: always
+    whitelabel.enabled: true
+  port: 8080
+
+logging.config: classpath:config/${spring.profiles.active:local}/logback-spring.xml
