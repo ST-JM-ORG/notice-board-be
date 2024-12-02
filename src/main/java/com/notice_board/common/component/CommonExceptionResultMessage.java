@@ -48,6 +48,7 @@ public enum CommonExceptionResultMessage {
 	ACCOUNT_WAIT(HttpStatus.UNAUTHORIZED, "E107", "승인 대기중인 계정"),
 	ACCOUNT_REJECT(HttpStatus.UNAUTHORIZED, "E108", "반려 계정"),
 	VERIFY_FAIL(HttpStatus.UNAUTHORIZED, "E109", "SMS 인증 실패"),
+	EMAIL_DUPLICATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "E110", "사용 중인 이메일"),
 
 	UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E999", "알수 없는 오류");
 
