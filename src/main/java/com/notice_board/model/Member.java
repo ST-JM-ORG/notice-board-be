@@ -3,9 +3,7 @@ package com.notice_board.model;
 import com.notice_board.model.commons.File;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.DiscriminatorFormula;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -53,7 +51,7 @@ abstract public class Member {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private UserType userType; // 유저타입
+    private UserType userType = UserType.USER; // 유저타입
 
     @Setter(AccessLevel.PROTECTED)
     @Column(nullable = false)

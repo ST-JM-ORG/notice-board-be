@@ -50,7 +50,7 @@ public enum CommonExceptionResultMessage {
 	VERIFY_FAIL(HttpStatus.UNAUTHORIZED, "E109", "SMS 인증 실패"),
 	EMAIL_DUPLICATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "E110", "사용 중인 이메일"),
 
-	UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E999", "알수 없는 오류");
+	UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E999", "알 수 없는 오류");
 
 	private final HttpStatus status;
 	private final String code;

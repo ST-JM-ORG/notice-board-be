@@ -1,26 +1,15 @@
 package com.notice_board.api.auth.service;
 
-import com.notice_board.common.component.CommonExceptionResultMessage;
-import com.notice_board.common.exception.CustomException;
-import com.notice_board.model.Member;
-import com.notice_board.repository.MemberRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.notice_board.api.auth.dto.MemberDto;
 
-import java.util.Optional;
+import java.io.IOException;
 
-@Service
-@RequiredArgsConstructor
-@Transactional
-public class AuthService {
+public interface AuthService {
+    void checkEmail(String email);
 
-    private final MemberRepository memberRepository;
+    void signUp(MemberDto memberDto) throws IOException;
 
-    public void checkEmail(String email) {
-        Optional<Member> member = memberRepository.findByEmail(email);
-        if (member.isPresent()) {
-            throw new CustomException(CommonExceptionResultMessage.EMAIL_DUPLICATE_FAIL);
-        }
-    }
+    void validPassword(String password);
+
+    void validEmail(String email);
 }
