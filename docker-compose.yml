@@ -1,0 +1,16 @@
+version: '3.9'
+name: 'notice-board-be'
+services:
+  support_platform:
+    container_name: notice-board-be
+    hostname: notice-board-be
+    image: ghcr.io/pjm529/notice-board-be:dev
+    ports:
+      - '8080:8080'
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SERVER_PORT: 8080
+      PROJECT_LOG_LEVEL: info
+    volumes:
+      - ./UPLOAD:/home/ubuntu/docker/notice-board-be/UPLOAD/
+      - ./logs:/home/ubuntu/docker/notice-board-be/logs/

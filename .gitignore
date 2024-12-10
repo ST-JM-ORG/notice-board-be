@@ -27,3 +27,4 @@ fabric.properties
 
 target
 src/main/resources/config/jm/
+src/main/resources/config/dev/
