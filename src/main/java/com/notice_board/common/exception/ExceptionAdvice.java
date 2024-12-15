@@ -2,6 +2,7 @@ package com.notice_board.common.exception;
 
 import com.notice_board.common.component.BaseResponse;
 import com.notice_board.common.component.JSONResult;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,7 @@ import java.nio.file.AccessDeniedException;
 @Slf4j
 @ControllerAdvice
 @RequestMapping(produces = MediaType.TEXT_HTML_VALUE)
+@Hidden // Swagger 문서에서 제외
 public class ExceptionAdvice {
 	@ExceptionHandler(CustomException.class)
 	@ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
