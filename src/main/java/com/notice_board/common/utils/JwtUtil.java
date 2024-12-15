@@ -1,6 +1,8 @@
-package com.notice_board.common.component;
+package com.notice_board.common.utils;
 
 import com.notice_board.api.auth.vo.MemberVo;
+import com.notice_board.common.component.CommonExceptionResultMessage;
+import com.notice_board.common.exception.CustomException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -57,16 +59,6 @@ public class JwtUtil {
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime tokenValidity = now.plusSeconds(expireTime);
 
-        System.out.println(now);
-        System.out.println(now);
-        System.out.println(now);
-        System.out.println(now);
-        System.out.println(now);
-        System.out.println(now);
-        System.out.println(now);
-        System.out.println(now);
-        System.out.println(now);
-        System.out.println(now);
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(Date.from(Instant.now()))
@@ -76,7 +68,7 @@ public class JwtUtil {
     }
 
 
-    public Long getUserId(String token) {
+    public Long getMemberId(String token) {
         return parseClaims(token).get("memberId", Long.class);
     }
 

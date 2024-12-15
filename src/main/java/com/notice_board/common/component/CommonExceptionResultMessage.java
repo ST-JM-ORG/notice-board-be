@@ -41,7 +41,7 @@ public enum CommonExceptionResultMessage {
 	LOGIN_SUCCESS(HttpStatus.OK, "E100", "로그인 성공"),
 	LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "E101", "로그인 실패"),
 	AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "E102", "Authentication failed."),
-	ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "E103", "Access Denied."),
+	ACCESS_DENIED(HttpStatus.FORBIDDEN, "E103", "Access Denied."),
 	JWT_TOKEN_EXPIRED(HttpStatus.FORBIDDEN, "E104", "Token has expired."),
 	SESSION_EXPIRED(HttpStatus.FORBIDDEN, "E105", "Invalid Session"),
 	PW_MISMATCH(HttpStatus.UNAUTHORIZED, "E106", "비밀번호 미일치"),

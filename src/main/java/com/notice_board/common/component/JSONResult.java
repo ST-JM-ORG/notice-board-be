@@ -142,6 +142,14 @@ public class JSONResult {
 				.build();
 	}
 
+	public static JSONResult unAuthentication() {
+		return JSONResult.builder()
+				.status(AUTHENTICATION_FAILED.getStatus().value())
+				.code(AUTHENTICATION_FAILED.getCode())
+				.message(AUTHENTICATION_FAILED.getMessage())
+				.build();
+	}
+
 	public static JSONResult maxFileSize() {
 		return JSONResult.builder()
 				.status(MAX_FILE_SIZE.getStatus().value())

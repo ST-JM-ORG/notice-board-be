@@ -14,6 +14,8 @@ import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -45,8 +47,20 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
+        String jwtSchemeName = "JWT";
+        SecurityRequirement securityRequirement = new SecurityRequirement()
+                .addList(jwtSchemeName);
+        Components components = new Components()
+                .addSecuritySchemes(jwtSchemeName, new SecurityScheme()
+                        .name(jwtSchemeName)
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT")
+                );
+
         return new OpenAPI()
-                .components(new Components())
+                .addSecurityItem(securityRequirement)
+                .components(components)
                 .info(apiInfo());
     }
 
