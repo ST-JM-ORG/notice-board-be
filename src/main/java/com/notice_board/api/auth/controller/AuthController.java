@@ -54,7 +54,7 @@ public class AuthController {
             , CommonExceptionResultMessage.VALID_FAIL
             , CommonExceptionResultMessage.INPUT_VALID_FAIL
             , CommonExceptionResultMessage.DB_FAIL
-            , CommonExceptionResultMessage.FILE_UPLOAD_FAIL
+            , CommonExceptionResultMessage.IMG_UPLOAD_FAIL
     })
     public BaseResponse signUp(@ModelAttribute MemberDto memberDto, @Parameter(hidden = true) BaseResponse res) throws IOException {
         authService.signUp(memberDto);
