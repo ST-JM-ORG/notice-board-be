@@ -3,9 +3,9 @@
 See here for more details: http://gordondickens.com/wordpress/2013/03/27/sawing-through-the-java-loggers/ -->
 <configuration>
   <springProperty scope="context" name="PROJECT_NAME" source="spring.application.name"/>
-  <springProperty scope="context" name="LOG_ABSOLUTE_PATH" source="osd.log.absolute-path"/>
-  <springProperty scope="context" name="FILE_MAX_HISTORY" source="osd.log.file-max-history"/>
-  <springProperty scope="context" name="LOG_LEVEL" source="osd.log.level"/>
+  <springProperty scope="context" name="LOG_ABSOLUTE_PATH" source="project.log.absolute-path"/>
+  <springProperty scope="context" name="FILE_MAX_HISTORY" source="project.log.file-max-history"/>
+  <springProperty scope="context" name="LOG_LEVEL" source="project.log.level"/>
 
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <file>${LOG_ABSOLUTE_PATH}/${PROJECT_NAME}.log</file>

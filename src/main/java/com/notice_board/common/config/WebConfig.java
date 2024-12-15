@@ -1,4 +1,4 @@
-package com.notice_board.common.component;
+package com.notice_board.common.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

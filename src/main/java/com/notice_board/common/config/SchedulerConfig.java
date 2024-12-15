@@ -1,5 +1,6 @@
-package com.notice_board.common.component;
+package com.notice_board.common.config;
 
+import com.notice_board.common.component.SystemValues;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;

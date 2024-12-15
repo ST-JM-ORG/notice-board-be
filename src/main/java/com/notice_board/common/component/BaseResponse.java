@@ -1,6 +1,7 @@
 package com.notice_board.common.component;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -18,10 +19,14 @@ import java.io.Serializable;
  * @version 1.0
  * @since 1.0
  */
+
+@Schema(description = "기본 응답 객체")
 @Data
 public class BaseResponse implements Serializable {
     @JsonProperty("result")
+    @Schema(description = "응답 상태", implementation = JSONResult.class)
     private JSONResult jsonResult; // 응답상태
 
+    @Schema(description = "응답 데이터")
     private Object data; // 응답데이터
 }

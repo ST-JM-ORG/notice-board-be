@@ -1,6 +1,9 @@
 package com.notice_board.common.component;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.notice_board.common.exception.CustomException;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.models.examples.Example;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,8 +34,17 @@ import static com.notice_board.common.component.CommonExceptionResultMessage.*;
 @AllArgsConstructor
 public class JSONResult {
 
+	@Schema(hidden = true)
+	@JsonIgnore
+	private Example holder;
+
+	@Schema(description = "HTTP 상태 코드", example = "200")
 	private int status;
+
+	@Schema(description = "응답 코드", example = "A000")
 	private String code;
+
+	@Schema(description = "응답 메시지", example = "요청 처리 성공")
 	private String message;
 
 	public static JSONResult successBuilder() {

@@ -39,9 +39,9 @@ import java.nio.file.AccessDeniedException;
 public class ExceptionAdvice {
 	@ExceptionHandler(CustomException.class)
 	@ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-	public Object osdException(HttpServletRequest request, CustomException e) {
+	public Object customException(HttpServletRequest request, CustomException e) {
 		log.error("Exception URI : " + request.getRequestURI());
-		log.error("OsdException : " + e.getMessage(), e);
+		log.error("customException : " + e.getMessage(), e);
 		BaseResponse res = new BaseResponse();
 		if (StringUtils.isEmpty(e.getMessage())) {
 			res.setJsonResult(JSONResult.failBuilder(e));

@@ -86,7 +86,7 @@ public class AuthServiceImpl implements AuthService {
         // 이메일 형식에 대한 정규식
         String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         if (!email.matches(regex)) {
-            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL, "이메일 형식을 맞춰주세요.");
+            throw new CustomException(CommonExceptionResultMessage.INPUT_VALID_FAIL, "이메일 형식을 맞춰주세요.");
         }
     }
 
@@ -99,7 +99,7 @@ public class AuthServiceImpl implements AuthService {
         // 영어 대소문자, 숫자, 특수문자 포함, 8~20자
         String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{8,20}$";
         if (!password.matches(regex)) {
-            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL, "비밀번호 형식을 맞춰주세요.");
+            throw new CustomException(CommonExceptionResultMessage.INPUT_VALID_FAIL, "비밀번호 형식을 맞춰주세요.");
         }
     }
 }
