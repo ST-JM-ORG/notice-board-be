@@ -1,16 +1,20 @@
 package com.notice_board.api.auth.service.impl;
 
+import com.notice_board.api.auth.dto.LoginDto;
 import com.notice_board.api.auth.dto.MemberDto;
 import com.notice_board.api.auth.service.AuthService;
+import com.notice_board.api.auth.vo.MemberVo;
 import com.notice_board.api.file.dto.FileDto;
 import com.notice_board.api.file.service.FileService;
 import com.notice_board.common.component.CommonExceptionResultMessage;
+import com.notice_board.common.component.JwtUtil;
 import com.notice_board.common.exception.CustomException;
 import com.notice_board.model.Member;
 import com.notice_board.model.User;
 import com.notice_board.model.commons.File;
 import com.notice_board.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,6 +37,8 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
 
     private final FileService fileService;
+
+    private final JwtUtil jwtUtil;
 
     @Override
     public void checkEmail(String email) {
@@ -88,6 +94,26 @@ public class AuthServiceImpl implements AuthService {
         if (!email.matches(regex)) {
             throw new CustomException(CommonExceptionResultMessage.INPUT_VALID_FAIL, "이메일 형식을 맞춰주세요.");
         }
+    }
+
+    @Override
+    public String login(LoginDto loginDto) {
+        String email = loginDto.getEmail();
+        String password = loginDto.getPassword();
+
+        if (StringUtils.isAnyEmpty(email, password)) {
+            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL);
+        }
+
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new CustomException(CommonExceptionResultMessage.LOGIN_FAILED));
+
+        if (!passwordEncoder.matches(password, member.getPassword())) {
+            throw new CustomException(CommonExceptionResultMessage.LOGIN_FAILED);
+        }
+
+        MemberVo memberVo = modelMapper.map(member, MemberVo.class);
+        String accessToken = jwtUtil.createAccessToken(memberVo);
+        return accessToken;
     }
 
     @Override

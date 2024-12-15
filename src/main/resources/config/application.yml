@@ -27,3 +27,7 @@ server:
   port: 8080
 
 logging.config: classpath:config/${spring.profiles.active:local}/logback-spring.xml
+
+jwt:
+  secretKey: "VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa"
+  expireTime: 86400000

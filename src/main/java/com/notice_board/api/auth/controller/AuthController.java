@@ -1,5 +1,6 @@
 package com.notice_board.api.auth.controller;
 
+import com.notice_board.api.auth.dto.LoginDto;
 import com.notice_board.api.auth.dto.MemberDto;
 import com.notice_board.api.auth.service.AuthService;
 import com.notice_board.common.annotation.ApiErrorCodeExample;
@@ -58,6 +59,18 @@ public class AuthController {
     })
     public BaseResponse signUp(@ModelAttribute MemberDto memberDto, @Parameter(hidden = true) BaseResponse res) throws IOException {
         authService.signUp(memberDto);
+        res.setJsonResult(JSONResult.successBuilder());
+        return res;
+    }
+
+    @PostMapping("/login")
+    @Operation(summary = "로그인")
+    @ApiErrorCodeExamples({
+            CommonExceptionResultMessage.VALID_FAIL
+            , CommonExceptionResultMessage.LOGIN_FAILED
+    })
+    public BaseResponse login(@RequestBody LoginDto loginDto, @Parameter(hidden = true) BaseResponse res) throws IOException {
+        res.setData(authService.login(loginDto));
         res.setJsonResult(JSONResult.successBuilder());
         return res;
     }
