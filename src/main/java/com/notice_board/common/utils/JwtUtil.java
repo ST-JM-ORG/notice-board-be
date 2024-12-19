@@ -1,8 +1,7 @@
 package com.notice_board.common.utils;
 
 import com.notice_board.api.auth.vo.MemberVo;
-import com.notice_board.common.component.CommonExceptionResultMessage;
-import com.notice_board.common.exception.CustomException;
+import com.notice_board.api.auth.vo.TokenVo;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
@@ -37,27 +35,27 @@ public class JwtUtil {
 
     private final Key key;
 
-    private final long accessTokenExpTime;
+    private final long ACCESS_TOKEN_EXP_TIME;
 
-    public JwtUtil(@Value("${jwt.secretKey}") String secretKey, @Value("${jwt.expireTime}") long accessTokenExpTime) {
+    private final long REFRESH_TOKEN_EXP_TIME;
+
+    public JwtUtil(@Value("${jwt.secretKey}") String secretKey, @Value("${jwt.expireTime}") long accessTokenExpTime
+            , @Value("${jwt.refreshExpireTime}") long refreshTokenExpTime) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
-        this.accessTokenExpTime = accessTokenExpTime;
-    }
-
-    public String createAccessToken(MemberVo member) {
-        return createToken(member, accessTokenExpTime);
+        this.ACCESS_TOKEN_EXP_TIME = accessTokenExpTime;
+        this.REFRESH_TOKEN_EXP_TIME = refreshTokenExpTime;
     }
 
 
-    private String createToken(MemberVo member, long expireTime) {
+    private String createAccessToken(MemberVo member, ZonedDateTime now) {
         Claims claims = Jwts.claims();
         claims.put("memberId", member.getId());
+        claims.put("name", member.getName());
         claims.put("email", member.getEmail());
         claims.put("role", member.getUserType());
 
-        ZonedDateTime now = ZonedDateTime.now();
-        ZonedDateTime tokenValidity = now.plusSeconds(expireTime);
+        ZonedDateTime tokenValidity = now.plusSeconds(ACCESS_TOKEN_EXP_TIME);
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -67,6 +65,27 @@ public class JwtUtil {
                 .compact();
     }
 
+    public TokenVo generateTokenVo(MemberVo memberVo) {
+        // 현재 시간
+        ZonedDateTime now = ZonedDateTime.now();
+
+        // Access Token 생성
+        String accessToken = this.createAccessToken(memberVo, now);
+
+        // Refresh Token 생성
+        Claims claims = Jwts.claims();
+        claims.put("memberId", memberVo.getId());
+        String refreshToken = Jwts.builder()
+                .setClaims(claims)
+                .setExpiration(Date.from(Instant.from(now.plusSeconds(REFRESH_TOKEN_EXP_TIME))))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+
+        return TokenVo.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
 
     public Long getMemberId(String token) {
         return parseClaims(token).get("memberId", Long.class);

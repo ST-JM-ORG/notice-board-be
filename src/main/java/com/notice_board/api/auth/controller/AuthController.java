@@ -3,11 +3,13 @@ package com.notice_board.api.auth.controller;
 import com.notice_board.api.auth.dto.LoginDto;
 import com.notice_board.api.auth.dto.MemberDto;
 import com.notice_board.api.auth.service.AuthService;
+import com.notice_board.api.auth.vo.MemberVo;
+import com.notice_board.api.auth.vo.TokenVo;
 import com.notice_board.common.annotation.ApiErrorCodeExample;
 import com.notice_board.common.annotation.ApiErrorCodeExamples;
+import com.notice_board.common.annotation.AuthMember;
 import com.notice_board.common.component.BaseResponse;
 import com.notice_board.common.component.CommonExceptionResultMessage;
-import com.notice_board.common.component.JSONResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -34,9 +36,9 @@ public class AuthController {
             parameters = @Parameter(name = "email", description = "이메일")
     )
     @ApiErrorCodeExample(CommonExceptionResultMessage.EMAIL_DUPLICATE_FAIL)
-    public BaseResponse checkEmail(@RequestParam String email) {
+    public BaseResponse<Boolean> checkEmail(@RequestParam String email) {
         authService.checkEmail(email);
-        return BaseResponse.from(null);
+        return BaseResponse.from(true);
 
     }
 
@@ -57,9 +59,9 @@ public class AuthController {
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.IMG_UPLOAD_FAIL
     })
-    public BaseResponse signUp(@ModelAttribute MemberDto memberDto) throws IOException {
+    public BaseResponse<Boolean> signUp(@ModelAttribute MemberDto memberDto) throws IOException {
         authService.signUp(memberDto);
-        return BaseResponse.from(null);
+        return BaseResponse.from(true);
     }
 
     @PostMapping("/login")
@@ -68,7 +70,19 @@ public class AuthController {
             CommonExceptionResultMessage.VALID_FAIL
             , CommonExceptionResultMessage.LOGIN_FAILED
     })
-    public BaseResponse<String> login(@RequestBody LoginDto loginDto) throws IOException {
+    public BaseResponse<TokenVo> login(@RequestBody LoginDto loginDto) throws IOException {
         return BaseResponse.from(authService.login(loginDto));
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃")
+    @ApiErrorCodeExamples({
+            CommonExceptionResultMessage.AUTHENTICATION_FAILED
+            , CommonExceptionResultMessage.VALID_FAIL
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<Boolean> logout(@RequestHeader("Refresh") String refreshToken, @AuthMember MemberVo member) throws IOException {
+        authService.logout(member, refreshToken);
+        return BaseResponse.from(true);
     }
 }

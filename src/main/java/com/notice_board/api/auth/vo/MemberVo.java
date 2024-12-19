@@ -1,6 +1,7 @@
 package com.notice_board.api.auth.vo;
 
-import com.notice_board.model.Member;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.notice_board.model.Auth.Member;
 import lombok.Data;
 
 
@@ -10,6 +11,7 @@ public class MemberVo {
 
     private String email;
 
+    @JsonIgnore
     private String password;
 
     private String name;

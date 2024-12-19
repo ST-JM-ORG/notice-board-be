@@ -1,4 +1,4 @@
-package com.notice_board.model;
+package com.notice_board.model.Auth;
 
 import com.notice_board.model.commons.File;
 import jakarta.persistence.*;

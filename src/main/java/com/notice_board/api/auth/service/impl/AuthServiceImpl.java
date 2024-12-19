@@ -4,14 +4,17 @@ import com.notice_board.api.auth.dto.LoginDto;
 import com.notice_board.api.auth.dto.MemberDto;
 import com.notice_board.api.auth.service.AuthService;
 import com.notice_board.api.auth.vo.MemberVo;
+import com.notice_board.api.auth.vo.TokenVo;
 import com.notice_board.api.file.dto.FileDto;
 import com.notice_board.api.file.service.FileService;
 import com.notice_board.common.component.CommonExceptionResultMessage;
 import com.notice_board.common.utils.JwtUtil;
 import com.notice_board.common.exception.CustomException;
-import com.notice_board.model.Member;
-import com.notice_board.model.User;
+import com.notice_board.model.Auth.BlackList;
+import com.notice_board.model.Auth.Member;
+import com.notice_board.model.Auth.User;
 import com.notice_board.model.commons.File;
+import com.notice_board.repository.BlackListRepository;
 import com.notice_board.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +41,8 @@ public class AuthServiceImpl implements AuthService {
     private final FileService fileService;
 
     private final JwtUtil jwtUtil;
+
+    private final BlackListRepository blackListRepository;
 
     @Override
     public void checkEmail(String email) {
@@ -96,7 +101,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String login(LoginDto loginDto) {
+    public TokenVo login(LoginDto loginDto) {
         String email = loginDto.getEmail();
         String password = loginDto.getPassword();
 
@@ -111,8 +116,30 @@ public class AuthServiceImpl implements AuthService {
         }
 
         MemberVo memberVo = modelMapper.map(member, MemberVo.class);
-        String accessToken = jwtUtil.createAccessToken(memberVo);
-        return accessToken;
+        return jwtUtil.generateTokenVo(memberVo);
+    }
+
+    @Override
+    public void logout(MemberVo memberVo, String refreshToken) {
+        if (StringUtils.isEmpty(refreshToken)) {
+            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL);
+        }
+
+        if (!jwtUtil.validateToken(refreshToken)) {
+            throw new CustomException(CommonExceptionResultMessage.AUTHENTICATION_FAILED, "유효하지 않는 Refresh Token");
+        }
+
+        Long memberId = jwtUtil.getMemberId(refreshToken);
+        if (memberVo.getId() != memberId) {
+            throw new CustomException(CommonExceptionResultMessage.AUTHENTICATION_FAILED, "로그인한 사용자의 Refresh Token 이 아닙니다.");
+        }
+
+        Optional<BlackList> blackList = blackListRepository.findByInvalidRefreshToken(refreshToken);
+        if (blackList.isPresent()) {
+            throw new CustomException(CommonExceptionResultMessage.AUTHENTICATION_FAILED, "이미 로그아웃 된 사용자입니다.");
+        }
+
+        blackListRepository.save(new BlackList(refreshToken));
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.notice_board.api.auth.service;
 
 import com.notice_board.api.auth.dto.LoginDto;
 import com.notice_board.api.auth.dto.MemberDto;
+import com.notice_board.api.auth.vo.MemberVo;
+import com.notice_board.api.auth.vo.TokenVo;
 
 import java.io.IOException;
 
@@ -14,5 +16,7 @@ public interface AuthService {
 
     void validEmail(String email);
 
-    String login(LoginDto loginDto);
+    TokenVo login(LoginDto loginDto);
+
+    void logout(MemberVo memberVo, String refreshToken);
 }

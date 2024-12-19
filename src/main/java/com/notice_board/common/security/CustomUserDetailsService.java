@@ -3,7 +3,7 @@ package com.notice_board.common.security;
 import com.notice_board.api.auth.vo.MemberVo;
 import com.notice_board.common.component.CommonExceptionResultMessage;
 import com.notice_board.common.exception.CustomException;
-import com.notice_board.model.Member;
+import com.notice_board.model.Auth.Member;
 import com.notice_board.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

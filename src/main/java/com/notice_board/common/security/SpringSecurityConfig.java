@@ -33,7 +33,7 @@ public class SpringSecurityConfig {
     private static final String[] AUTH_WHITELIST = {
             "/swagger-ui/**", "/api-docs", "/swagger-ui-custom.html",
             "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html",
-            "/auth/**"
+            "/auth/email-check", "/auth/sign-in", "/auth/login",
     };
 
     @Bean
