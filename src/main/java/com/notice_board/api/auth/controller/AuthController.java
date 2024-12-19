@@ -34,10 +34,10 @@ public class AuthController {
             parameters = @Parameter(name = "email", description = "이메일")
     )
     @ApiErrorCodeExample(CommonExceptionResultMessage.EMAIL_DUPLICATE_FAIL)
-    public BaseResponse checkEmail(@RequestParam String email, @Parameter(hidden = true) BaseResponse res) {
+    public BaseResponse checkEmail(@RequestParam String email) {
         authService.checkEmail(email);
-        res.setJsonResult(JSONResult.successBuilder());
-        return res;
+        return BaseResponse.from(null);
+
     }
 
     @PostMapping("/sign-up")
@@ -57,10 +57,9 @@ public class AuthController {
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.IMG_UPLOAD_FAIL
     })
-    public BaseResponse signUp(@ModelAttribute MemberDto memberDto, @Parameter(hidden = true) BaseResponse res) throws IOException {
+    public BaseResponse signUp(@ModelAttribute MemberDto memberDto) throws IOException {
         authService.signUp(memberDto);
-        res.setJsonResult(JSONResult.successBuilder());
-        return res;
+        return BaseResponse.from(null);
     }
 
     @PostMapping("/login")
@@ -69,9 +68,7 @@ public class AuthController {
             CommonExceptionResultMessage.VALID_FAIL
             , CommonExceptionResultMessage.LOGIN_FAILED
     })
-    public BaseResponse login(@RequestBody LoginDto loginDto, @Parameter(hidden = true) BaseResponse res) throws IOException {
-        res.setData(authService.login(loginDto));
-        res.setJsonResult(JSONResult.successBuilder());
-        return res;
+    public BaseResponse<String> login(@RequestBody LoginDto loginDto) throws IOException {
+        return BaseResponse.from(authService.login(loginDto));
     }
 }
