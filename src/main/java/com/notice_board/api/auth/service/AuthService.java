@@ -19,4 +19,6 @@ public interface AuthService {
     TokenVo login(LoginDto loginDto);
 
     void logout(MemberVo memberVo, String refreshToken);
+
+    TokenVo reissueToken(String refreshToken);
 }

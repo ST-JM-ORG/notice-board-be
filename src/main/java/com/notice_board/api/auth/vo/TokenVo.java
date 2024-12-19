@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 
+@Schema(description = "토큰 관련 VO")
 @Data
 @Builder
 public class TokenVo {

@@ -120,26 +120,53 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void logout(MemberVo memberVo, String refreshToken) {
+    public void logout(MemberVo loginMember, String refreshToken) {
         if (StringUtils.isEmpty(refreshToken)) {
             throw new CustomException(CommonExceptionResultMessage.VALID_FAIL);
         }
 
-        if (!jwtUtil.validateToken(refreshToken)) {
+        if (!jwtUtil.validateToken(refreshToken)) { // refreshToken 검증
             throw new CustomException(CommonExceptionResultMessage.AUTHENTICATION_FAILED, "유효하지 않는 Refresh Token");
         }
 
         Long memberId = jwtUtil.getMemberId(refreshToken);
-        if (memberVo.getId() != memberId) {
+        if (loginMember.getId() != memberId) { // refreshToken 사용자와 비교
             throw new CustomException(CommonExceptionResultMessage.AUTHENTICATION_FAILED, "로그인한 사용자의 Refresh Token 이 아닙니다.");
         }
 
         Optional<BlackList> blackList = blackListRepository.findByInvalidRefreshToken(refreshToken);
-        if (blackList.isPresent()) {
+        if (blackList.isPresent()) { // refreshToken BlackList 존재 여부
             throw new CustomException(CommonExceptionResultMessage.AUTHENTICATION_FAILED, "이미 로그아웃 된 사용자입니다.");
         }
 
         blackListRepository.save(new BlackList(refreshToken));
+    }
+
+    @Override
+    public TokenVo reissueToken(String refreshToken) {
+        if (StringUtils.isEmpty(refreshToken)) {
+            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL);
+        }
+
+        if (!jwtUtil.validateToken(refreshToken)) {  // refreshToken 검증
+            throw new CustomException(CommonExceptionResultMessage.AUTHENTICATION_FAILED, "유효하지 않는 Refresh Token");
+        }
+
+        Optional<BlackList> blackList = blackListRepository.findByInvalidRefreshToken(refreshToken);
+        if (blackList.isPresent()) { // refreshToken BlackList 존재 여부
+            throw new CustomException(CommonExceptionResultMessage.AUTHENTICATION_FAILED, "사용할 수 없는 Refresh Token 입니다.");
+        }
+
+        Long memberId = jwtUtil.getMemberId(refreshToken);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.LOGIN_FAILED));
+
+        // 기존 Refresh 토큰 삭제
+        blackListRepository.save(new BlackList(refreshToken));
+
+        // 새로운 Token 발급
+        MemberVo memberVo = modelMapper.map(member, MemberVo.class);
+        return jwtUtil.generateTokenVo(memberVo);
     }
 
     @Override

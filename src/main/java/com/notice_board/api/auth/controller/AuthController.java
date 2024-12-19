@@ -70,19 +70,35 @@ public class AuthController {
             CommonExceptionResultMessage.VALID_FAIL
             , CommonExceptionResultMessage.LOGIN_FAILED
     })
-    public BaseResponse<TokenVo> login(@RequestBody LoginDto loginDto) throws IOException {
+    public BaseResponse<TokenVo> login(@RequestBody LoginDto loginDto) {
         return BaseResponse.from(authService.login(loginDto));
     }
 
     @PostMapping("/logout")
-    @Operation(summary = "로그아웃")
+    @Operation(summary = "로그아웃", description = "로그인 한 상태로 Header 에 Refresh 전송")
     @ApiErrorCodeExamples({
             CommonExceptionResultMessage.AUTHENTICATION_FAILED
             , CommonExceptionResultMessage.VALID_FAIL
             , CommonExceptionResultMessage.FAIL
     })
-    public BaseResponse<Boolean> logout(@RequestHeader("Refresh") String refreshToken, @AuthMember MemberVo member) throws IOException {
+    public BaseResponse<Boolean> logout(
+            @Parameter(name = "Refresh", description = "사용자의 Refresh Token")
+            @RequestHeader("Refresh") String refreshToken, @AuthMember MemberVo member) {
         authService.logout(member, refreshToken);
         return BaseResponse.from(true);
+    }
+
+    @PostMapping("/reissue-token")
+    @Operation(summary = "토큰 재발행", description = "Header 에 Refresh 전송")
+    @ApiErrorCodeExamples({
+            CommonExceptionResultMessage.AUTHENTICATION_FAILED
+            , CommonExceptionResultMessage.LOGIN_FAILED
+            , CommonExceptionResultMessage.VALID_FAIL
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<TokenVo> reissueToken(
+            @Parameter(name = "Refresh", description = "사용자의 Refresh Token")
+            @RequestHeader("Refresh") String refreshToken) {
+        return BaseResponse.from(authService.reissueToken(refreshToken));
     }
 }
