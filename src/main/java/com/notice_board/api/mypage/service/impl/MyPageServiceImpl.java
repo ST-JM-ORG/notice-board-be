@@ -42,7 +42,7 @@ public class MyPageServiceImpl implements MyPageService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void editInfo(Long memberId, EditMemberDto editMemberDto) throws IOException {
+    public void editUser(Long memberId, EditMemberDto editMemberDto) throws IOException {
         String name = editMemberDto.getName();
         if (StringUtils.isEmpty(name)) {
             throw new CustomException(CommonExceptionResultMessage.VALID_FAIL);
@@ -96,5 +96,13 @@ public class MyPageServiceImpl implements MyPageService {
 
         member.setPassword(passwordEncoder.encode(newPw));
         memberRepository.save(member);
+    }
+
+    @Override
+    public void deleteUser(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "회원 정보를 찾을 수 없습니다."));
+
+        memberRepository.delete(member);
     }
 }

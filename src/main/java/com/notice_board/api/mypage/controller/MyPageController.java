@@ -20,14 +20,14 @@ import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/my-page")
+@RequestMapping("/user")
 @CrossOrigin("*")
-@Tag(name = "My Page API", description = "마이페이지 API 모음.")
+@Tag(name = "User Info API", description = "개인 정보 API 모음.")
 public class MyPageController {
 
     private final MyPageService myPageService;
 
-    @GetMapping("/info")
+    @GetMapping("/me")
     @Operation(summary = "내 정보 가져오기")
     @ApiErrorCodeExamples({
             CommonExceptionResultMessage.AUTHENTICATION_FAILED
@@ -37,7 +37,7 @@ public class MyPageController {
         return BaseResponse.from(memberVo);
     }
 
-    @PutMapping("/edit")
+    @PutMapping("/me")
     @Operation(summary = "내 정보 수정", description = "정보 수정 요청. 데이터는 반드시 `form-data`로 전송.",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(mediaType = "application/x-www-form-urlencoded",
@@ -51,12 +51,12 @@ public class MyPageController {
             , CommonExceptionResultMessage.IMG_UPLOAD_FAIL
             , CommonExceptionResultMessage.NOT_FOUND
     })
-    public BaseResponse<Boolean> editInfo(@ModelAttribute EditMemberDto memberDto, @AuthMember MemberVo memberVo) throws IOException {
-        myPageService.editInfo(memberVo.getId(), memberDto);
+    public BaseResponse<Boolean> editUser(@ModelAttribute EditMemberDto memberDto, @AuthMember MemberVo memberVo) throws IOException {
+        myPageService.editUser(memberVo.getId(), memberDto);
         return BaseResponse.from(true);
     }
 
-    @PutMapping("/password")
+    @PutMapping("/me/password")
     @Operation(summary = "비밀번호 수정")
     @ApiErrorCodeExamples({CommonExceptionResultMessage.VALID_FAIL
             , CommonExceptionResultMessage.DB_FAIL
@@ -66,6 +66,14 @@ public class MyPageController {
     })
     public BaseResponse<Boolean> editPassword(@RequestBody EditPwDto editPwDto, @AuthMember MemberVo memberVo) {
         myPageService.editPassword(memberVo.getId(), editPwDto);
+        return BaseResponse.from(true);
+    }
+
+    @DeleteMapping("/me")
+    @Operation(summary = "회원 탈퇴")
+    @ApiErrorCodeExamples({CommonExceptionResultMessage.DB_FAIL})
+    public BaseResponse<Boolean> deleteUser(@AuthMember MemberVo memberVo) {
+        myPageService.deleteUser(memberVo.getId());
         return BaseResponse.from(true);
     }
 }
