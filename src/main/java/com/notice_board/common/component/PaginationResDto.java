@@ -25,7 +25,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class PagenationResDto<T> {
+public class PaginationResDto<T> {
   private String error;
   private List<T> data;
   private Long total;
