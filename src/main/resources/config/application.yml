@@ -31,6 +31,6 @@ logging.config: classpath:config/${spring.profiles.active:local}/logback-spring.
 jwt:
   secretKey: "VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa"
   # 1일
-  expireTime: 86400000
+  expireTime: 86400
   # 일주일
-  refreshExpireTime: 604800000
+  refreshExpireTime: 604800
