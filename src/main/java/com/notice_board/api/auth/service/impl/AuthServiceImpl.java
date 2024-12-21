@@ -121,7 +121,7 @@ public class AuthServiceImpl implements AuthService {
             throw new CustomException(CommonExceptionResultMessage.LOGIN_FAILED);
         }
 
-        MemberVo memberVo = modelMapper.map(member, MemberVo.class);
+        MemberVo memberVo = MemberVo.toVO(member);
         return jwtUtil.generateTokenVo(memberVo);
     }
 

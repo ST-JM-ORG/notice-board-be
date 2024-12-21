@@ -52,7 +52,7 @@ public class JwtUtil {
         Claims claims = Jwts.claims();
         claims.put("memberId", member.getId());
         claims.put("name", member.getName());
-        claims.put("email", member.getEmail());
+        claims.put("profileImg", member.getProfileImg());
         claims.put("role", member.getUserType());
 
         ZonedDateTime tokenValidity = now.plusSeconds(ACCESS_TOKEN_EXP_TIME);

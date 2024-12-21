@@ -8,7 +8,10 @@ import com.notice_board.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.Tika;
+import org.apache.tika.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -83,6 +87,26 @@ public class FileServiceImpl implements FileService {
             }
         }
         return true;
+    }
+
+    @Override
+    public ResponseEntity<byte[]> imageDisplay(String filePathType, String uuid) {
+        byte[] defaultImageByteArray = null;
+        try (InputStream inputStream = getClass().getResourceAsStream("/static/assets/images/no_image.png")) {
+            defaultImageByteArray = IOUtils.toByteArray(inputStream);
+        } catch (IOException e) { // 기본 이미지를 읽을 수 없는 경우 예외 처리
+            e.printStackTrace();
+            return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        String path = fileUploadPath + File.separator + filePathType + File.separator + uuid;
+        try {
+            byte[] imageByteArray = Files.readAllBytes(Paths.get(path));
+            return new ResponseEntity<byte[]>(imageByteArray, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<byte[]>(defaultImageByteArray, HttpStatus.OK);
+        }
     }
 
     private void makeFolder(String dirPath) {

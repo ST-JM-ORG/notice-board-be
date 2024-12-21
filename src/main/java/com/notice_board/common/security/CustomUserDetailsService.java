@@ -25,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Member member = memberRepository.findById(Long.parseLong(id))
                 .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.AUTHENTICATION_FAILED));
 
-        MemberVo memberVo = modelMapper.map(member, MemberVo.class);
+        MemberVo memberVo = MemberVo.toVO(member);
         return new CustomUserDetails(memberVo);
     }
 }
