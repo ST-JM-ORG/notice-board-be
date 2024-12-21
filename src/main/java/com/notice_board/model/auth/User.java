@@ -1,4 +1,4 @@
-package com.notice_board.model.Auth;
+package com.notice_board.model.auth;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;

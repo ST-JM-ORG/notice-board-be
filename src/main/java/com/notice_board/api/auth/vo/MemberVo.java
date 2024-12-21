@@ -1,7 +1,7 @@
 package com.notice_board.api.auth.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.notice_board.model.Auth.Member;
+import com.notice_board.model.auth.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

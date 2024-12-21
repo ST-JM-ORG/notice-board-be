@@ -1,4 +1,4 @@
-package com.notice_board.model.Auth;
+package com.notice_board.model.auth;
 
 import com.notice_board.model.commons.File;
 import jakarta.persistence.*;
@@ -59,6 +59,9 @@ abstract public class Member {
 
     @Setter(AccessLevel.PROTECTED)
     private LocalDateTime delDt; // 탈퇴일자
+
+    private LocalDateTime lastModifyDt; // 마지막 수정일자
+
 
     @ElementCollection
     @CollectionTable(

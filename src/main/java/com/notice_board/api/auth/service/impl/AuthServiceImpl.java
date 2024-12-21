@@ -10,11 +10,13 @@ import com.notice_board.api.file.service.FileService;
 import com.notice_board.common.component.CommonExceptionResultMessage;
 import com.notice_board.common.utils.JwtUtil;
 import com.notice_board.common.exception.CustomException;
-import com.notice_board.model.Auth.BlackList;
-import com.notice_board.model.Auth.Member;
-import com.notice_board.model.Auth.User;
+import com.notice_board.model.auth.BlackList;
+import com.notice_board.model.auth.Member;
+import com.notice_board.model.auth.MemberHis;
+import com.notice_board.model.auth.User;
 import com.notice_board.model.commons.File;
 import com.notice_board.repository.BlackListRepository;
+import com.notice_board.repository.MemberHisRepository;
 import com.notice_board.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +45,8 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtil jwtUtil;
 
     private final BlackListRepository blackListRepository;
+
+    private final MemberHisRepository memberHisRepository;
 
     @Override
     public void checkEmail(String email) {
@@ -85,6 +89,8 @@ public class AuthServiceImpl implements AuthService {
             saveUser.getMemberFiles().put(Member.FileType.PROFILE_IMG, modelMapper.map(fileDto, File.class));
         }
 
+        MemberHis mh = new MemberHis(saveUser);
+        memberHisRepository.save(mh);
     }
 
     @Override
