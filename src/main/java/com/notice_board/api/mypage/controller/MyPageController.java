@@ -1,6 +1,7 @@
 package com.notice_board.api.mypage.controller;
 
 import com.notice_board.api.auth.vo.MemberVo;
+import com.notice_board.api.mypage.dto.EditPwDto;
 import com.notice_board.api.mypage.dto.EditMemberDto;
 import com.notice_board.api.mypage.service.MyPageService;
 import com.notice_board.common.annotation.ApiErrorCodeExamples;
@@ -52,6 +53,19 @@ public class MyPageController {
     })
     public BaseResponse<Boolean> editInfo(@ModelAttribute EditMemberDto memberDto, @AuthMember MemberVo memberVo) throws IOException {
         myPageService.editInfo(memberVo.getId(), memberDto);
+        return BaseResponse.from(true);
+    }
+
+    @PutMapping("/password")
+    @Operation(summary = "비밀번호 수정")
+    @ApiErrorCodeExamples({CommonExceptionResultMessage.VALID_FAIL
+            , CommonExceptionResultMessage.DB_FAIL
+            , CommonExceptionResultMessage.NOT_FOUND
+            , CommonExceptionResultMessage.INPUT_VALID_FAIL
+            , CommonExceptionResultMessage.PW_MISMATCH
+    })
+    public BaseResponse<Boolean> editPassword(@RequestBody EditPwDto editPwDto, @AuthMember MemberVo memberVo) {
+        myPageService.editPassword(memberVo.getId(), editPwDto);
         return BaseResponse.from(true);
     }
 }

@@ -1,8 +1,10 @@
 package com.notice_board.api.mypage.service.impl;
 
+import com.notice_board.api.auth.service.AuthService;
 import com.notice_board.api.file.dto.FileDto;
 import com.notice_board.api.file.service.FileService;
 import com.notice_board.api.mypage.dto.EditMemberDto;
+import com.notice_board.api.mypage.dto.EditPwDto;
 import com.notice_board.api.mypage.service.MyPageService;
 import com.notice_board.common.component.CommonExceptionResultMessage;
 import com.notice_board.common.exception.CustomException;
@@ -14,6 +16,7 @@ import com.notice_board.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +36,10 @@ public class MyPageServiceImpl implements MyPageService {
     private final ModelMapper modelMapper;
 
     private final MemberHisRepository memberHisRepository;
+
+    private final AuthService authService;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void editInfo(Long memberId, EditMemberDto editMemberDto) throws IOException {
@@ -63,5 +70,31 @@ public class MyPageServiceImpl implements MyPageService {
 
         MemberHis mh = new MemberHis(member);
         memberHisRepository.save(mh);
+    }
+
+    @Override
+    public void editPassword(Long memberId, EditPwDto editPwDto) {
+        String newPw = editPwDto.getNewPw();
+        String currentPw = editPwDto.getCurrentPw();
+
+        if (editPwDto == null || StringUtils.isAnyEmpty(newPw, currentPw)) {
+            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL);
+        }
+
+        authService.validPassword(newPw);
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "회원 정보를 찾을 수 없습니다."));
+
+        if (!passwordEncoder.matches(currentPw, member.getPassword())) {
+            throw new CustomException(CommonExceptionResultMessage.PW_MISMATCH);
+        }
+
+        if (StringUtils.equals(newPw, currentPw)) {
+            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL, "현재 사용 중인 비밀번호입니다.");
+        }
+
+        member.setPassword(passwordEncoder.encode(newPw));
+        memberRepository.save(member);
     }
 }
