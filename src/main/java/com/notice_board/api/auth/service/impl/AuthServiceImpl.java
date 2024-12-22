@@ -171,7 +171,7 @@ public class AuthServiceImpl implements AuthService {
         blackListRepository.save(new BlackList(refreshToken));
 
         // 새로운 Token 발급
-        MemberVo memberVo = modelMapper.map(member, MemberVo.class);
+        MemberVo memberVo = MemberVo.toVO(member);
         return jwtUtil.generateTokenVo(memberVo);
     }
 
