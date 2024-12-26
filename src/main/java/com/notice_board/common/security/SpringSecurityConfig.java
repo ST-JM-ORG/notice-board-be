@@ -34,6 +34,7 @@ public class SpringSecurityConfig {
             "/swagger-ui/**", "/api-docs", "/swagger-ui-custom.html",
             "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html",
             "/auth/email-check", "/auth/sign-up", "/auth/login", "/auth/reissue-token",
+            "/file/image/**",
     };
 
     @Bean
