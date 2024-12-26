@@ -49,7 +49,7 @@ public class ExceptionAdvice {
 		} else {
 			res.setJsonResult(JSONResult.failBuilder(e, e.getMessage()));
 		}
-		return ResponseEntity.ok(res);
+		return ResponseEntity.status(e.getResultMessage().getStatus()).body(res);
 	}
 
 	@ExceptionHandler({
@@ -63,7 +63,7 @@ public class ExceptionAdvice {
 		log.error("NotFound : " + e.getMessage(), e);
 		BaseResponse res = new BaseResponse();
 		res.setJsonResult(JSONResult.notFoundBuilder(e));
-		return ResponseEntity.ok(res);
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
 	}
 
 	@ExceptionHandler(DataAccessException.class)
@@ -74,17 +74,17 @@ public class ExceptionAdvice {
 
 		BaseResponse res = new BaseResponse();
 		res.setJsonResult(JSONResult.dbFailBuilder(e));
-		return ResponseEntity.ok(res);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
 	}
 
 	@ExceptionHandler(AccessDeniedException.class)
-	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+	@ResponseStatus(code = HttpStatus.FORBIDDEN)
 	public Object handleAccessDeniedException(HttpServletRequest request, AccessDeniedException e) {
 		log.error("AccessDeniedException URI : " + request.getRequestURI());
 		log.error("AccessDeniedException : " + e.getMessage(), e);
 		BaseResponse res = new BaseResponse();
 		res.setJsonResult(JSONResult.accessDenied());
-		return ResponseEntity.ok(res);
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(res);
 	}
 
 	@ExceptionHandler(MaxUploadSizeExceededException.class)
@@ -94,7 +94,7 @@ public class ExceptionAdvice {
 		log.error("MaxUploadSizeExceededException : " + e.getMessage(), e);
 		BaseResponse res = new BaseResponse();
 		res.setJsonResult(JSONResult.maxFileSize());
-		return ResponseEntity.ok(res);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
 
 	}
 
@@ -110,8 +110,7 @@ public class ExceptionAdvice {
 		} else {
 			res.setJsonResult(JSONResult.entityNotFoundBuilder(e, e.getMessage()));
 		}
-		return ResponseEntity.ok(res);
-
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
 	}
 
 	@ExceptionHandler(Exception.class)
@@ -121,7 +120,6 @@ public class ExceptionAdvice {
 		log.error("Exception : " + e.getMessage(), e);
 		BaseResponse res = new BaseResponse();
 		res.setJsonResult(JSONResult.failBuilder(e));
-		return ResponseEntity.ok(res);
-
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
 	}
 }
