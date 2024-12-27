@@ -114,6 +114,12 @@ public class AdminUserServiceImpl implements AdminUserService {
         memberHisRepository.save(mh);
     }
 
+    @Override
+    public void deleteUser(Long memberId, MemberVo loginMember) {
+        Member member = this.getMember(memberId, loginMember.getUserType());
+        memberRepository.delete(member);
+    }
+
     private Member getMember(Long id, Member.UserType userType) {
         Member member;
         if (userType == Member.UserType.ADMIN) {

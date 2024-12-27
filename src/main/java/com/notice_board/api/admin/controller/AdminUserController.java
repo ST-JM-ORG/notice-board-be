@@ -78,4 +78,18 @@ public class AdminUserController {
         adminUserService.editUser(id, adminMemberDto, memberVo);
         return BaseResponse.from(true);
     }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "회원 탈퇴")
+    @ApiErrorCodeExamples({
+            CommonExceptionResultMessage.AUTHENTICATION_FAILED
+            , CommonExceptionResultMessage.ACCESS_DENIED
+            , CommonExceptionResultMessage.NOT_FOUND
+            , CommonExceptionResultMessage.DB_FAIL
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<Boolean> deleteUser(@PathVariable Long id, @AuthMember MemberVo memberVo) {
+        adminUserService.deleteUser(id, memberVo);
+        return BaseResponse.from(true);
+    }
 }
