@@ -1,6 +1,7 @@
 package com.notice_board.model.auth;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,10 @@ public class MemberHis {
     @Column
     private String contact; // 연락처
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Member.UserType userType; // 유저타입
+
     @NonNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
@@ -36,5 +41,6 @@ public class MemberHis {
         this.name = member.getName();
         this.contact = member.getContact();
         this.member = member;
+        this.userType = member.getUserType();
     }
 }
