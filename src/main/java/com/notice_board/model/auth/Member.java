@@ -80,6 +80,6 @@ abstract public class Member {
     }
 
     public enum UserType {
-        USER, ADMIN
+        USER, ADMIN, SUPER_ADMIN
     }
 }
