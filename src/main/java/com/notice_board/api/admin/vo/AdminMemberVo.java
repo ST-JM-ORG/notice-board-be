@@ -1,6 +1,5 @@
-package com.notice_board.api.auth.vo;
+package com.notice_board.api.admin.vo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.notice_board.model.auth.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -12,17 +11,12 @@ import java.util.Optional;
 
 @Data
 @Builder
-public class MemberVo {
-
-    @JsonIgnore
+public class AdminMemberVo {
+    @Schema(description = "PK")
     private Long id;
 
     @Schema(description = "이메일")
     private String email;
-
-    @JsonIgnore
-    @Schema(description = "비밀번호")
-    private String password;
 
     @Schema(description = "이름")
     private String name;
@@ -36,13 +30,13 @@ public class MemberVo {
     @Schema(description = "유저 타입")
     private Member.UserType userType;
 
-    public static MemberVo toVO(Member member) {
+    public static AdminMemberVo toVO(Member member) {
         String profileImg = Optional.ofNullable(member.getMemberFiles())
                 .map(files -> files.get(Member.FileType.PROFILE_IMG))
                 .map(profile -> "/file/image/" + Member.FileType.PROFILE_IMG.name() + "/" + profile.getUuid())
                 .orElse(StringUtils.EMPTY);
 
-        return MemberVo.builder()
+        return AdminMemberVo.builder()
                 .id(member.getId())
                 .email(member.getEmail())
                 .name(member.getName())

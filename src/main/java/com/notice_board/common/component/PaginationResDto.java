@@ -1,5 +1,6 @@
 package com.notice_board.common.component;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,7 @@ import java.util.List;
 
 /**
  * <pre>
- *	Pagination 결과
+ * 	Pagination 결과
  * </pre>
  *
  * <pre>
@@ -26,9 +27,16 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class PaginationResDto<T> {
-  private String error;
-  private List<T> data;
-  private Long total;
-  private Integer size;
-  private Integer page;
+
+    @Schema(description = "결과 Data 목록")
+    private List<T> data;
+
+    @Schema(description = "총 Data 수")
+    private Long total;
+
+    @Schema(description = "페이지 크기")
+    private Integer size;
+
+    @Schema(description = "페이지 번호")
+    private Integer page;
 }
