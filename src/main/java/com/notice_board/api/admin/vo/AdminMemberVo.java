@@ -27,8 +27,8 @@ public class AdminMemberVo {
     @Schema(description = "프로필 이미지 url")
     private String profileImg;
 
-    @Schema(description = "유저 타입")
-    private Member.UserType userType;
+    @Schema(description = "관리자 여부")
+    private String adminYn;
 
     public static AdminMemberVo toVO(Member member) {
         String profileImg = Optional.ofNullable(member.getMemberFiles())
@@ -42,7 +42,7 @@ public class AdminMemberVo {
                 .name(member.getName())
                 .contact(member.getContact())
                 .profileImg(profileImg)
-                .userType(member.getUserType())
+                .adminYn(member.getUserType() == Member.UserType.USER ? "N" : "Y")
                 .build();
     }
 }
