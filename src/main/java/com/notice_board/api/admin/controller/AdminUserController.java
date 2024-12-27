@@ -38,7 +38,8 @@ public class AdminUserController {
             , CommonExceptionResultMessage.ACCESS_DENIED
             , CommonExceptionResultMessage.FAIL
     })
-    public BaseResponse<PaginationResDto<AdminMemberVo>> getUserList(@ParameterObject CustomPageable pageable, @ParameterObject UserSearchReqDto reqDto, @AuthMember MemberVo memberVo) {
+    public BaseResponse<PaginationResDto<AdminMemberVo>> getUserList(@ParameterObject CustomPageable pageable
+            , @ParameterObject UserSearchReqDto reqDto, @AuthMember MemberVo memberVo) {
         return BaseResponse.from(adminUserService.getUserList(pageable, reqDto, memberVo));
     }
 
@@ -50,7 +51,7 @@ public class AdminUserController {
             , CommonExceptionResultMessage.NOT_FOUND
             , CommonExceptionResultMessage.FAIL
     })
-    public BaseResponse<AdminMemberVo> getUserDetail(@PathVariable Long id, @AuthMember MemberVo memberVo) {
+    public BaseResponse<AdminMemberVo> getUserDetail(@Schema(description = "회원 PK") @PathVariable Long id, @AuthMember MemberVo memberVo) {
         return BaseResponse.from(adminUserService.getUserDetail(id, memberVo));
     }
 
@@ -74,7 +75,8 @@ public class AdminUserController {
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })
-    public BaseResponse<Boolean> editUser(@ModelAttribute AdminEditMemberDto adminMemberDto, @PathVariable Long id, @AuthMember MemberVo memberVo) {
+    public BaseResponse<Boolean> editUser(@ModelAttribute AdminEditMemberDto adminMemberDto
+            , @Schema(description = "회원 PK") @PathVariable Long id, @AuthMember MemberVo memberVo) {
         adminUserService.editUser(id, adminMemberDto, memberVo);
         return BaseResponse.from(true);
     }
@@ -88,7 +90,7 @@ public class AdminUserController {
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })
-    public BaseResponse<Boolean> deleteUser(@PathVariable Long id, @AuthMember MemberVo memberVo) {
+    public BaseResponse<Boolean> deleteUser(@Schema(description = "회원 PK") @PathVariable Long id, @AuthMember MemberVo memberVo) {
         adminUserService.deleteUser(id, memberVo);
         return BaseResponse.from(true);
     }
