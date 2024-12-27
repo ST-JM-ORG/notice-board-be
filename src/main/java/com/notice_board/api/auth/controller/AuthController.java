@@ -18,8 +18,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
@@ -57,9 +55,10 @@ public class AuthController {
             , CommonExceptionResultMessage.VALID_FAIL
             , CommonExceptionResultMessage.INPUT_VALID_FAIL
             , CommonExceptionResultMessage.DB_FAIL
-            , CommonExceptionResultMessage.IMG_UPLOAD_FAIL
+            , CommonExceptionResultMessage.FILE_UPLOAD_FAIL
+            , CommonExceptionResultMessage.FILE_EXT_FAIL
     })
-    public BaseResponse<Boolean> signUp(@ModelAttribute MemberDto memberDto) throws IOException {
+    public BaseResponse<Boolean> signUp(@ModelAttribute MemberDto memberDto) {
         authService.signUp(memberDto);
         return BaseResponse.from(true);
     }

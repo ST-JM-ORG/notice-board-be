@@ -15,8 +15,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -48,10 +46,11 @@ public class MyPageController {
     )
     @ApiErrorCodeExamples({CommonExceptionResultMessage.VALID_FAIL
             , CommonExceptionResultMessage.DB_FAIL
-            , CommonExceptionResultMessage.IMG_UPLOAD_FAIL
+            , CommonExceptionResultMessage.FILE_UPLOAD_FAIL
+            , CommonExceptionResultMessage.FILE_EXT_FAIL
             , CommonExceptionResultMessage.NOT_FOUND
     })
-    public BaseResponse<Boolean> editUser(@ModelAttribute EditMemberDto memberDto, @AuthMember MemberVo memberVo) throws IOException {
+    public BaseResponse<Boolean> editUser(@ModelAttribute EditMemberDto memberDto, @AuthMember MemberVo memberVo) {
         myPageService.editUser(memberVo.getId(), memberDto);
         return BaseResponse.from(true);
     }

@@ -59,12 +59,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void signUp(MemberDto memberDto) throws IOException {
+    public void signUp(MemberDto memberDto) {
         String email = memberDto.getEmail();
         String name = memberDto.getName();
         String password = memberDto.getPassword();
 
-        if (StringUtils.isEmpty(name)) {
+        if (StringUtils.isBlank(name)) {
             throw new CustomException(CommonExceptionResultMessage.VALID_FAIL);
         }
 
@@ -82,9 +82,7 @@ public class AuthServiceImpl implements AuthService {
 
         MultipartFile profileImg = memberDto.getProfileImg();
         if (profileImg != null && !profileImg.isEmpty()) {
-            if (!fileService.ExtCheck(new MultipartFile[]{profileImg}, "image")) { // 확장자 검사
-                throw new CustomException(CommonExceptionResultMessage.IMG_UPLOAD_FAIL, "허용되지 않은 첨부파일 확장자");
-            }
+            fileService.ExtCheck(new MultipartFile[]{profileImg}, "image"); // 확장자 검사
             FileDto fileDto = fileService.saveFile(profileImg, Member.FileType.PROFILE_IMG.name());
             saveUser.getMemberFiles().put(Member.FileType.PROFILE_IMG, modelMapper.map(fileDto, File.class));
         }

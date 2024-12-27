@@ -10,7 +10,7 @@ import java.io.IOException;
 public interface AuthService {
     void checkEmail(String email);
 
-    void signUp(MemberDto memberDto) throws IOException;
+    void signUp(MemberDto memberDto);
 
     void validPassword(String password);
 

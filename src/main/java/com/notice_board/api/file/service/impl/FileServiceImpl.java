@@ -42,8 +42,10 @@ public class FileServiceImpl implements FileService {
             "image/jpeg", "image/pjpeg", "image/png", "image/gif", "image/bmp", "image/x-windows-bmp" // 이미지파일
     );
 
+    private final Tika tika = new Tika();
+
     @Override
-    public FileDto saveFile(MultipartFile file, String filePathType) throws IOException {
+    public FileDto saveFile(MultipartFile file, String filePathType) {
         if (file == null) throw new CustomException(CommonExceptionResultMessage.FILE_UPLOAD_FAIL);
 
         FileDto fileDto = new FileDto();
@@ -63,30 +65,26 @@ public class FileServiceImpl implements FileService {
 
         makeFolder(dirPath); // 폴더 생성
         Path savePath = Paths.get(filePath);// path 지정
-        file.transferTo(savePath); // 파일 저장
+
+        try {
+            file.transferTo(savePath); // 파일 저장
+        } catch (IOException e) {
+            throw new CustomException(CommonExceptionResultMessage.FILE_UPLOAD_FAIL);
+        }
+
         return fileDto;
     }
 
     @Override
-    public Boolean ExtCheck(MultipartFile[] files, String type) throws IOException {
-        if (files != null) {
-            for (MultipartFile file : files) {
-                String originalFilename = file.getOriginalFilename(); // 원본 파일명
-                String fileExt = originalFilename.substring(originalFilename.lastIndexOf('.') + 1); // 확장자
-                if (StringUtils.equals(type, ("image"))) {
-                    if (!EXT_WHITELIST_IMG.contains(fileExt.toLowerCase())) {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-                InputStream inputStream = file.getInputStream();
-                if (!validMime(inputStream, type)) {
-                    return false;
-                }
-            }
+    public void ExtCheck(MultipartFile[] files, String type) {
+        if (files == null || files.length == 0) {
+            return; // 파일이 없으면 아무 작업도 하지 않음
         }
-        return true;
+
+        for (MultipartFile file : files) {
+            validateFileExtension(file, type);
+            validateFileMimeType(file, type);
+        }
     }
 
     @Override
@@ -116,16 +114,48 @@ public class FileServiceImpl implements FileService {
         }
     }
 
-    private boolean validMime(InputStream inputStream, String type) throws IOException {
-        Tika tika = new Tika();
-        List<String> validTypeList;
-        if (StringUtils.equals(type, ("image"))) {
-            validTypeList = MIME_WHITELIST_IMG;
-        } else {
-            return false;
+    private void validateFileExtension(MultipartFile file, String type) {
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || !originalFilename.contains(".")) {
+            throw new CustomException(CommonExceptionResultMessage.FILE_EXT_FAIL, "파일 확장자가 없습니다.");
         }
-        String mimeType = tika.detect(inputStream);
-        return validTypeList.stream().anyMatch(notValidType -> notValidType.equalsIgnoreCase(mimeType));
+
+        String fileExt = originalFilename.substring(originalFilename.lastIndexOf('.') + 1).toLowerCase();
+
+        // image
+        if (StringUtils.equals(type, "image") && !EXT_WHITELIST_IMG.contains(fileExt)) {
+            throw new CustomException(CommonExceptionResultMessage.FILE_EXT_FAIL, "허용되지 않은 이미지 파일 확장자입니다.");
+        }
+
+        if (!StringUtils.equalsAny(type, "image")) {
+            throw new CustomException(CommonExceptionResultMessage.FILE_EXT_FAIL, "허용되지 않은 파일 타입입니다.");
+        }
     }
 
+    private void validateFileMimeType(MultipartFile file, String type) {
+        try (InputStream inputStream = file.getInputStream()) {
+            if (!validMime(inputStream, type)) {
+                throw new CustomException(CommonExceptionResultMessage.FILE_EXT_FAIL);
+            }
+        } catch (IOException e) {
+            throw new CustomException(CommonExceptionResultMessage.FILE_UPLOAD_FAIL);
+        }
+    }
+
+    private boolean validMime(InputStream inputStream, String type) {
+        List<String> validTypeList;
+
+        if (StringUtils.equals(type, "image")) { // 이미지 타입에 대한 MIME 검증
+            validTypeList = MIME_WHITELIST_IMG;
+        } else {
+            return false; // 이미지 외의 타입은 검증하지 않음
+        }
+
+        try {
+            String mimeType = tika.detect(inputStream);
+            return validTypeList.stream().anyMatch(validType -> validType.equalsIgnoreCase(mimeType));
+        } catch (IOException e) {
+            throw new CustomException(CommonExceptionResultMessage.FILE_UPLOAD_FAIL);
+        }
+    }
 }

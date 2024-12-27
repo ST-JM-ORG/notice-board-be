@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Service("myPageService")
@@ -42,9 +41,9 @@ public class MyPageServiceImpl implements MyPageService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void editUser(Long memberId, EditMemberDto editMemberDto) throws IOException {
+    public void editUser(Long memberId, EditMemberDto editMemberDto) {
         String name = editMemberDto.getName();
-        if (StringUtils.isEmpty(name)) {
+        if (StringUtils.isBlank(name)) {
             throw new CustomException(CommonExceptionResultMessage.VALID_FAIL);
         }
 
@@ -61,9 +60,7 @@ public class MyPageServiceImpl implements MyPageService {
 
         MultipartFile profileImg = editMemberDto.getProfileImg();
         if (profileImg != null && !profileImg.isEmpty()) {
-            if (!fileService.ExtCheck(new MultipartFile[]{profileImg}, "image")) { // 확장자 검사
-                throw new CustomException(CommonExceptionResultMessage.IMG_UPLOAD_FAIL, "허용되지 않은 첨부파일 확장자");
-            }
+            fileService.ExtCheck(new MultipartFile[]{profileImg}, "image"); // 확장자 검사
             FileDto fileDto = fileService.saveFile(profileImg, Member.FileType.PROFILE_IMG.name());
             member.getMemberFiles().put(Member.FileType.PROFILE_IMG, modelMapper.map(fileDto, File.class));
         }

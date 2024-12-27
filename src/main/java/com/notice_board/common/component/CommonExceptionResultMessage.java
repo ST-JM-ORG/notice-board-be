@@ -29,7 +29,7 @@ public enum CommonExceptionResultMessage {
 	FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "E000", "요청 처리 실패"),
 	DB_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "E001", "요청 DB 처리 실패"),
 	FILE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "E002", "파일 업로드 실패"),
-	IMG_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "E003", "이미지 업로드 실패"),
+	FILE_EXT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "E003", "허용되지 않은 첨부파일 확장자"),
 	VALID_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "E004", "입력 필수 값 미입력"),
 	EMAIL_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "E005", "메일 전송 실패"),
 	MAX_FILE_SIZE(HttpStatus.INTERNAL_SERVER_ERROR, "E006", "첨부파일 용량 초과"),

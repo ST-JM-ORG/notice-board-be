@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,7 +71,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
 
     @Override
-    public void editUser(Long memberId, AdminEditMemberDto editMemberDto, MemberVo loginMember) throws IOException {
+    public void editUser(Long memberId, AdminEditMemberDto editMemberDto, MemberVo loginMember) {
         String name = editMemberDto.getName();
         // 필수값 체크
         if (memberId == null || StringUtils.isBlank(name)) {
@@ -106,9 +105,7 @@ public class AdminUserServiceImpl implements AdminUserService {
 
         MultipartFile profileImg = editMemberDto.getProfileImg();
         if (profileImg != null && !profileImg.isEmpty()) {
-            if (!fileService.ExtCheck(new MultipartFile[]{profileImg}, "image")) { // 확장자 검사
-                throw new CustomException(CommonExceptionResultMessage.IMG_UPLOAD_FAIL, "허용되지 않은 첨부파일 확장자");
-            }
+            fileService.ExtCheck(new MultipartFile[]{profileImg}, "image"); // 확장자 검사
             FileDto fileDto = fileService.saveFile(profileImg, Member.FileType.PROFILE_IMG.name());
             member.getMemberFiles().put(Member.FileType.PROFILE_IMG, modelMapper.map(fileDto, File.class));
         }

@@ -15,5 +15,5 @@ public interface AdminUserService {
 
     AdminMemberVo getUserDetail(Long id, MemberVo loginMember);
 
-    void editUser(Long memberId, AdminEditMemberDto editMemberDto, MemberVo loginMember) throws IOException;
+    void editUser(Long memberId, AdminEditMemberDto editMemberDto, MemberVo loginMember);
 }

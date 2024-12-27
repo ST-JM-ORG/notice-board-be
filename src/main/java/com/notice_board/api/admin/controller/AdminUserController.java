@@ -5,7 +5,6 @@ import com.notice_board.api.admin.dto.UserSearchReqDto;
 import com.notice_board.api.admin.service.AdminUserService;
 import com.notice_board.api.admin.vo.AdminMemberVo;
 import com.notice_board.api.auth.vo.MemberVo;
-import com.notice_board.api.mypage.dto.EditMemberDto;
 import com.notice_board.common.annotation.ApiErrorCodeExamples;
 import com.notice_board.common.annotation.AuthMember;
 import com.notice_board.common.component.BaseResponse;
@@ -20,8 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 
 @RestController
@@ -70,13 +67,14 @@ public class AdminUserController {
             CommonExceptionResultMessage.AUTHENTICATION_FAILED
             , CommonExceptionResultMessage.ACCESS_DENIED
             , CommonExceptionResultMessage.NOT_FOUND
-            , CommonExceptionResultMessage.IMG_UPLOAD_FAIL
+            , CommonExceptionResultMessage.FILE_UPLOAD_FAIL
+            , CommonExceptionResultMessage.FILE_EXT_FAIL
             , CommonExceptionResultMessage.VALID_FAIL
             , CommonExceptionResultMessage.INPUT_VALID_FAIL
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })
-    public BaseResponse<Boolean> editUser(@ModelAttribute AdminEditMemberDto adminMemberDto, @PathVariable Long id, @AuthMember MemberVo memberVo) throws IOException {
+    public BaseResponse<Boolean> editUser(@ModelAttribute AdminEditMemberDto adminMemberDto, @PathVariable Long id, @AuthMember MemberVo memberVo) {
         adminUserService.editUser(id, adminMemberDto, memberVo);
         return BaseResponse.from(true);
     }
