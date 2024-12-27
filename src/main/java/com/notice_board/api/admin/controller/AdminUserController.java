@@ -38,4 +38,16 @@ public class AdminUserController {
     public BaseResponse<PaginationResDto<AdminMemberVo>> getUserList(@ParameterObject CustomPageable pageable, @ParameterObject UserSearchReqDto reqDto, @AuthMember MemberVo memberVo) {
         return BaseResponse.from(adminUserService.getUserList(pageable, reqDto, memberVo));
     }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "회원 상세 조회")
+    @ApiErrorCodeExamples({
+            CommonExceptionResultMessage.AUTHENTICATION_FAILED
+            , CommonExceptionResultMessage.ACCESS_DENIED
+            , CommonExceptionResultMessage.NOT_FOUND
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<AdminMemberVo> getUserDetail(@PathVariable Long id, @AuthMember MemberVo memberVo) {
+        return BaseResponse.from(adminUserService.getUserDetail(id, memberVo));
+    }
 }

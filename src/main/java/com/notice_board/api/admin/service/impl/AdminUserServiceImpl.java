@@ -4,8 +4,10 @@ import com.notice_board.api.admin.dto.UserSearchReqDto;
 import com.notice_board.api.admin.service.AdminUserService;
 import com.notice_board.api.admin.vo.AdminMemberVo;
 import com.notice_board.api.auth.vo.MemberVo;
+import com.notice_board.common.component.CommonExceptionResultMessage;
 import com.notice_board.common.component.CustomPageable;
 import com.notice_board.common.component.PaginationResDto;
+import com.notice_board.common.exception.CustomException;
 import com.notice_board.model.auth.Member;
 import com.notice_board.repository.MemberRepository;
 import com.notice_board.repository.specification.AdminUserSpecification;
@@ -44,5 +46,18 @@ public class AdminUserServiceImpl implements AdminUserService {
                 .size(customPageable.getSize())
                 .page(customPageable.getPage())
                 .build();
+    }
+
+    @Override
+    public AdminMemberVo getUserDetail(Long id, MemberVo loginMember) {
+        Member member;
+        if (loginMember.getUserType() == Member.UserType.ADMIN) {
+            member = memberRepository.findByIdAndUserType(id, Member.UserType.USER) // ADMIN 일 경우 USER 만 조회
+                    .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "회원 조회 실패: ID " + id + "에 해당하는 사용자 없음"));
+        } else {
+            member = memberRepository.findByIdAndUserTypeNot(id, Member.UserType.SUPER_ADMIN) // SUPER_ADMIN 일 경우 SUPER_ADMIN 빼고 모두 조회
+                    .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "회원 조회 실패: ID " + id + "에 해당하는 사용자 없음"));
+        }
+        return AdminMemberVo.toVO(member);
     }
 }

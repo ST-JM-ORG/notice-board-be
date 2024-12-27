@@ -8,4 +8,6 @@ import com.notice_board.common.component.PaginationResDto;
 
 public interface AdminUserService {
     PaginationResDto<AdminMemberVo> getUserList(CustomPageable customPageable, UserSearchReqDto reqDto, MemberVo loginMember);
+
+    AdminMemberVo getUserDetail(Long id, MemberVo loginMember);
 }
