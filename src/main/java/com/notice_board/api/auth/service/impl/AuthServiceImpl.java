@@ -113,10 +113,12 @@ public class AuthServiceImpl implements AuthService {
             throw new CustomException(CommonExceptionResultMessage.VALID_FAIL);
         }
 
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new CustomException(CommonExceptionResultMessage.LOGIN_FAILED));
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.LOGIN_FAILED,
+                        "아이디(로그인 이메일) 또는 비밀번호가 잘못 되었습니다. 아이디와 비밀번호를 정확히 입력해 주세요."));
 
         if (!passwordEncoder.matches(password, member.getPassword())) {
-            throw new CustomException(CommonExceptionResultMessage.LOGIN_FAILED);
+            throw new CustomException(CommonExceptionResultMessage.LOGIN_FAILED, "아이디(로그인 이메일) 또는 비밀번호가 잘못 되었습니다. 아이디와 비밀번호를 정확히 입력해 주세요.");
         }
 
         MemberVo memberVo = MemberVo.toVO(member);
