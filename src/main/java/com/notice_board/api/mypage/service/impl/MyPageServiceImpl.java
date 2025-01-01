@@ -8,6 +8,7 @@ import com.notice_board.api.mypage.dto.EditPwDto;
 import com.notice_board.api.mypage.service.MyPageService;
 import com.notice_board.common.component.CommonExceptionResultMessage;
 import com.notice_board.common.exception.CustomException;
+import com.notice_board.common.exception.ValidException;
 import com.notice_board.model.auth.Member;
 import com.notice_board.model.auth.MemberHis;
 import com.notice_board.model.commons.File;
@@ -44,7 +45,7 @@ public class MyPageServiceImpl implements MyPageService {
     public void editUser(Long memberId, EditMemberDto editMemberDto) {
         String name = editMemberDto.getName();
         if (StringUtils.isBlank(name)) {
-            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL);
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "name", "이름을 입력해주세요.");
         }
 
         Member member = memberRepository.findById(memberId)
@@ -74,8 +75,12 @@ public class MyPageServiceImpl implements MyPageService {
         String newPw = editPwDto.getNewPw();
         String currentPw = editPwDto.getCurrentPw();
 
-        if (editPwDto == null || StringUtils.isAnyEmpty(newPw, currentPw)) {
-            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL);
+        if (StringUtils.isBlank(newPw)) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "newPw", "새 비밀번호를 입력해주세요.");
+        }
+
+        if (StringUtils.isBlank(currentPw)) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "currentPw", "현재 비밀번호를 입력해주세요.");
         }
 
         authService.validPassword(newPw);
@@ -84,11 +89,11 @@ public class MyPageServiceImpl implements MyPageService {
                 .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "회원 정보를 찾을 수 없습니다."));
 
         if (!passwordEncoder.matches(currentPw, member.getPassword())) {
-            throw new CustomException(CommonExceptionResultMessage.PW_MISMATCH);
+            throw new ValidException(CommonExceptionResultMessage.PW_MISMATCH, "currentPw");
         }
 
         if (StringUtils.equals(newPw, currentPw)) {
-            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL, "현재 사용 중인 비밀번호입니다.");
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "newPw", "현재 사용 중인 비밀번호입니다.");
         }
 
         member.setPassword(passwordEncoder.encode(newPw));

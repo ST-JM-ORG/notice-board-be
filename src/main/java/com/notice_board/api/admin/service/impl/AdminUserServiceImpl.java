@@ -11,6 +11,7 @@ import com.notice_board.common.component.CommonExceptionResultMessage;
 import com.notice_board.common.component.CustomPageable;
 import com.notice_board.common.component.PaginationResDto;
 import com.notice_board.common.exception.CustomException;
+import com.notice_board.common.exception.ValidException;
 import com.notice_board.model.auth.Member;
 import com.notice_board.model.auth.MemberHis;
 import com.notice_board.model.commons.File;
@@ -71,26 +72,27 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
 
     @Override
-    public void editUser(Long memberId, AdminEditMemberDto editMemberDto, MemberVo loginMember) {
+    public void editUser(Long id, AdminEditMemberDto editMemberDto, MemberVo loginMember) {
         String name = editMemberDto.getName();
+
         // 필수값 체크
-        if (memberId == null || StringUtils.isBlank(name)) {
-            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL);
+        if (StringUtils.isBlank(name)) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "name", "이름을 입력해주세요.");
         }
 
         String profileDelYn = editMemberDto.getProfileDelYn();
         if (!StringUtils.equalsAny(profileDelYn, "Y", "N")) {
-            throw new CustomException(CommonExceptionResultMessage.INPUT_VALID_FAIL, "profileDelYn 값은 'Y' 또는 'N'이어야 합니다.");
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "profileDelYn", "profileDelYn 값은 'Y' 또는 'N'이어야 합니다.");
         }
 
         // SUPER_ADMIN 의 경우 adminYn은 필수
         Member.UserType userType = loginMember.getUserType();
         String adminYn = editMemberDto.getAdminYn();
         if (userType == Member.UserType.SUPER_ADMIN && !StringUtils.equalsAny(adminYn, "Y", "N")) {
-            throw new CustomException(CommonExceptionResultMessage.INPUT_VALID_FAIL, "adminYn 값은 'Y' 또는 'N'이어야 합니다.");
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "adminYn", "adminYn 값은 'Y' 또는 'N'이어야 합니다.");
         }
 
-        Member member = this.getMember(memberId, userType);
+        Member member = this.getMember(id, userType);
         member.setName(name);
         member.setContact(editMemberDto.getContact());
         member.setLastModifyDt(LocalDateTime.now());
@@ -115,12 +117,16 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
 
     @Override
-    public void deleteUser(Long memberId, MemberVo loginMember) {
-        Member member = this.getMember(memberId, loginMember.getUserType());
+    public void deleteUser(Long id, MemberVo loginMember) {
+        Member member = this.getMember(id, loginMember.getUserType());
         memberRepository.delete(member);
     }
 
     private Member getMember(Long id, Member.UserType userType) {
+        if (id == null) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "id", "회원 PK를 입력해주세요.");
+        }
+
         Member member;
         if (userType == Member.UserType.ADMIN) {
             member = memberRepository.findByIdAndUserType(id, Member.UserType.USER) // ADMIN 일 경우 USER 만 조회

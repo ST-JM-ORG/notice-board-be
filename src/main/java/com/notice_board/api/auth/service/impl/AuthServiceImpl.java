@@ -8,6 +8,7 @@ import com.notice_board.api.auth.vo.TokenVo;
 import com.notice_board.api.file.dto.FileDto;
 import com.notice_board.api.file.service.FileService;
 import com.notice_board.common.component.CommonExceptionResultMessage;
+import com.notice_board.common.exception.ValidException;
 import com.notice_board.common.utils.JwtUtil;
 import com.notice_board.common.exception.CustomException;
 import com.notice_board.model.auth.BlackList;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.bind.ValidationException;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -65,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
         String password = memberDto.getPassword();
 
         if (StringUtils.isBlank(name)) {
-            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL);
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "name", "이름을 입력해주세요.");
         }
 
         this.checkEmail(email);
@@ -93,14 +95,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void validEmail(String email) {
-        if (StringUtils.isEmpty(email)) {
-            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL);
+        if (StringUtils.isBlank(email)) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "email", "이메일을 입력해주세요.");
         }
 
         // 이메일 형식에 대한 정규식
         String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         if (!email.matches(regex)) {
-            throw new CustomException(CommonExceptionResultMessage.INPUT_VALID_FAIL, "이메일 형식을 맞춰주세요.");
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "email", "이메일 형식을 맞춰주세요.");
         }
     }
 
@@ -109,16 +111,18 @@ public class AuthServiceImpl implements AuthService {
         String email = loginDto.getEmail();
         String password = loginDto.getPassword();
 
-        if (StringUtils.isAnyEmpty(email, password)) {
-            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL);
+        if (StringUtils.isBlank(email)) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "email", "이메일을 입력해주세요.");
         }
 
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.LOGIN_FAILED,
-                        "아이디(로그인 이메일) 또는 비밀번호가 잘못 되었습니다. 아이디와 비밀번호를 정확히 입력해 주세요."));
+        if (StringUtils.isBlank(password)) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "password", "비밀번호를 입력해주세요.");
+        }
+
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new CustomException(CommonExceptionResultMessage.LOGIN_FAILED));
 
         if (!passwordEncoder.matches(password, member.getPassword())) {
-            throw new CustomException(CommonExceptionResultMessage.LOGIN_FAILED, "아이디(로그인 이메일) 또는 비밀번호가 잘못 되었습니다. 아이디와 비밀번호를 정확히 입력해 주세요.");
+            throw new CustomException(CommonExceptionResultMessage.LOGIN_FAILED);
         }
 
         MemberVo memberVo = MemberVo.toVO(member);
@@ -127,8 +131,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void logout(MemberVo loginMember, String refreshToken) {
-        if (StringUtils.isEmpty(refreshToken)) {
-            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL);
+        if (StringUtils.isBlank(refreshToken)) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "Refresh", "리프레시 토큰을 입력해주세요.");
         }
 
         if (!jwtUtil.validateToken(refreshToken)) { // refreshToken 검증
@@ -150,8 +154,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public TokenVo reissueToken(String refreshToken) {
-        if (StringUtils.isEmpty(refreshToken)) {
-            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL);
+        if (StringUtils.isBlank(refreshToken)) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "Refresh", "리프레시 토큰을 입력해주세요.");
         }
 
         if (!jwtUtil.validateToken(refreshToken)) {  // refreshToken 검증
@@ -164,8 +168,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         Long memberId = jwtUtil.getMemberId(refreshToken);
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.LOGIN_FAILED));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(CommonExceptionResultMessage.LOGIN_FAILED));
 
         // 기존 Refresh 토큰 삭제
         blackListRepository.save(new BlackList(refreshToken));
@@ -177,14 +180,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void validPassword(String password) {
-        if (StringUtils.isEmpty(password)) {
-            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL);
+        if (StringUtils.isBlank(password)) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "password", "비밀번호를 입력해주세요.");
         }
 
         // 영어 대소문자, 숫자, 특수문자 포함, 8~20자
         String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{8,20}$";
         if (!password.matches(regex)) {
-            throw new CustomException(CommonExceptionResultMessage.INPUT_VALID_FAIL, "비밀번호 형식을 맞춰주세요.");
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "password", "비밀번호 형식을 맞춰주세요.");
         }
     }
 }

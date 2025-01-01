@@ -38,17 +38,30 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @RequestMapping(produces = MediaType.TEXT_HTML_VALUE)
 @Hidden // Swagger 문서에서 제외
 public class ExceptionAdvice {
+
+	@ExceptionHandler(ValidException.class)
+	@ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+	public Object validException(HttpServletRequest request, ValidException e) {
+		log.error("Exception URI : " + request.getRequestURI());
+		log.error("validException : " + e.getMessage(), e);
+
+		BaseResponse res = new BaseResponse();
+		String message = StringUtils.isEmpty(e.getMessage()) ? e.getResultMessage().getMessage() : e.getMessage();
+		res.setJsonResult(JSONResult.validFailBuilder(e, e.getTarget(), message));
+
+		return ResponseEntity.status(e.getResultMessage().getStatus()).body(res);
+	}
+
 	@ExceptionHandler(CustomException.class)
 	@ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
 	public Object customException(HttpServletRequest request, CustomException e) {
 		log.error("Exception URI : " + request.getRequestURI());
 		log.error("customException : " + e.getMessage(), e);
+
 		BaseResponse res = new BaseResponse();
-		if (StringUtils.isEmpty(e.getMessage())) {
-			res.setJsonResult(JSONResult.failBuilder(e));
-		} else {
-			res.setJsonResult(JSONResult.failBuilder(e, e.getMessage()));
-		}
+		String message = StringUtils.isEmpty(e.getMessage()) ? e.getResultMessage().getMessage() : e.getMessage();
+
+		res.setJsonResult(JSONResult.failBuilder(e, message));
 		return ResponseEntity.status(e.getResultMessage().getStatus()).body(res);
 	}
 

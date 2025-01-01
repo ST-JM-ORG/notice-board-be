@@ -15,7 +15,7 @@ public interface AdminUserService {
 
     AdminMemberVo getUserDetail(Long id, MemberVo loginMember);
 
-    void editUser(Long memberId, AdminEditMemberDto editMemberDto, MemberVo loginMember);
+    void editUser(Long id, AdminEditMemberDto editMemberDto, MemberVo loginMember);
 
-    void deleteUser(Long memberId, MemberVo loginMember);
+    void deleteUser(Long id, MemberVo loginMember);
 }

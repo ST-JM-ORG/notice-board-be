@@ -71,7 +71,6 @@ public class AdminUserController {
             , CommonExceptionResultMessage.FILE_UPLOAD_FAIL
             , CommonExceptionResultMessage.FILE_EXT_FAIL
             , CommonExceptionResultMessage.VALID_FAIL
-            , CommonExceptionResultMessage.INPUT_VALID_FAIL
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })

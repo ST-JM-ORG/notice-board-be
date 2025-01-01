@@ -2,6 +2,7 @@ package com.notice_board.common.component;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.notice_board.common.exception.CustomException;
+import com.notice_board.common.exception.ValidException;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.models.examples.Example;
 import jakarta.persistence.EntityNotFoundException;
@@ -47,6 +48,9 @@ public class JSONResult {
 	@Schema(description = "응답 메시지", example = "요청 처리 성공")
 	private String message;
 
+	@Schema(description = "에러 Target", example = "email")
+	private String target;
+
 	public static JSONResult successBuilder() {
 		return JSONResult.builder()
 				.status(SUCCESS.getStatus().value())
@@ -54,21 +58,15 @@ public class JSONResult {
 				.message(SUCCESS.getMessage())
 				.build();
 	}
-	public static JSONResult successBuilderToMsg(String msg) {
+
+	public static JSONResult failBuilder(Exception e) {
 		return JSONResult.builder()
-				.status(SUCCESS.getStatus().value())
-				.code(SUCCESS.getCode())
-				.message(msg)
+				.status(FAIL.getStatus().value())
+				.code(FAIL.getCode())
+				.message(FAIL.getMessage())
 				.build();
 	}
 
-	public static JSONResult failBuilder(CustomException e) {
-		return JSONResult.builder()
-				.status(e.getResultMessage().getStatus().value())
-				.code(e.getResultMessage().getCode())
-				.message(e.getResultMessage().getMessage())
-				.build();
-	}
     public static JSONResult failBuilder(CustomException e, String message) {
         return JSONResult.builder()
             .status(e.getResultMessage().getStatus().value())
@@ -77,12 +75,12 @@ public class JSONResult {
             .build();
     }
 
-
-	public static JSONResult failBuilder(Exception e) {
+	public static JSONResult validFailBuilder(ValidException e, String target, String message) {
 		return JSONResult.builder()
-				.status(FAIL.getStatus().value())
-				.code(FAIL.getCode())
-				.message(FAIL.getMessage())
+				.status(e.getResultMessage().getStatus().value())
+				.code(e.getResultMessage().getCode())
+				.message(message)
+				.target(target)
 				.build();
 	}
 
@@ -93,38 +91,6 @@ public class JSONResult {
 				.message(DB_FAIL.getMessage())
 				.build();
 	}
-
-    public static JSONResult fileUploadExtFailBuilder(Exception e) {
-        return JSONResult.builder()
-            .status(FILE_UPLOAD_FAIL.getStatus().value())
-            .code(FILE_UPLOAD_FAIL.getCode())
-            .message("허용되지 않은 첨부파일 확장자입니다.")
-            .build();
-    }
-
-    public static JSONResult fileUploadFailBuilder(Exception e) {
-        return JSONResult.builder()
-            .status(FILE_UPLOAD_FAIL.getStatus().value())
-            .code(FILE_UPLOAD_FAIL.getCode())
-            .message("첨부파일 업로드에 실패하였습니다.")
-            .build();
-    }
-
-    public static JSONResult pwMismatchBuilder() {
-        return JSONResult.builder()
-            .status(PW_MISMATCH.getStatus().value())
-            .code(PW_MISMATCH.getCode())
-            .message("비밀번호가 일치하지 않습니다.")
-            .build();
-    }
-
-    public static JSONResult commentsFailBuilderToMsg(String msg) {
-        return JSONResult.builder()
-            .status(FAIL.getStatus().value())
-            .code(FAIL.getCode())
-            .message(msg)
-            .build();
-    }
 
 	public static JSONResult notFoundBuilder(Exception e) {
 		return JSONResult.builder()

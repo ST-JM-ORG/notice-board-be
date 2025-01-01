@@ -60,7 +60,6 @@ public class MyPageController {
     @ApiErrorCodeExamples({CommonExceptionResultMessage.VALID_FAIL
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.NOT_FOUND
-            , CommonExceptionResultMessage.INPUT_VALID_FAIL
             , CommonExceptionResultMessage.PW_MISMATCH
     })
     public BaseResponse<Boolean> editPassword(@RequestBody EditPwDto editPwDto, @AuthMember MemberVo memberVo) {
