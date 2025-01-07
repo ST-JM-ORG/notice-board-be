@@ -68,8 +68,6 @@ public class AdminUserController {
             CommonExceptionResultMessage.AUTHENTICATION_FAILED
             , CommonExceptionResultMessage.ACCESS_DENIED
             , CommonExceptionResultMessage.NOT_FOUND
-            , CommonExceptionResultMessage.FILE_UPLOAD_FAIL
-            , CommonExceptionResultMessage.FILE_EXT_FAIL
             , CommonExceptionResultMessage.VALID_FAIL
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL

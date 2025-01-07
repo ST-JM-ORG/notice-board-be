@@ -105,13 +105,6 @@ public class AdminUserServiceImpl implements AdminUserService {
             member.getMemberFiles().remove(Member.FileType.PROFILE_IMG);
         }
 
-        MultipartFile profileImg = editMemberDto.getProfileImg();
-        if (profileImg != null && !profileImg.isEmpty()) {
-            fileService.ExtCheck(new MultipartFile[]{profileImg}, "image"); // 확장자 검사
-            FileDto fileDto = fileService.saveFile(profileImg, Member.FileType.PROFILE_IMG.name());
-            member.getMemberFiles().put(Member.FileType.PROFILE_IMG, modelMapper.map(fileDto, File.class));
-        }
-
         MemberHis mh = new MemberHis(member);
         memberHisRepository.save(mh);
     }
