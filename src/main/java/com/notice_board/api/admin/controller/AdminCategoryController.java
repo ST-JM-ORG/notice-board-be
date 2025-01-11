@@ -1,6 +1,7 @@
 package com.notice_board.api.admin.controller;
 
 import com.notice_board.api.admin.dto.CategoryDto;
+import com.notice_board.api.admin.dto.CategorySortDto;
 import com.notice_board.api.admin.service.AdminCategoryService;
 import com.notice_board.api.admin.vo.CategoryVo;
 import com.notice_board.common.annotation.ApiErrorCodeExamples;
@@ -12,6 +13,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -65,7 +68,6 @@ public class AdminCategoryController {
         return BaseResponse.from(true);
     }
 
-
     @DeleteMapping("/{id}")
     @Operation(summary = "카테고리 삭제")
     @ApiErrorCodeExamples({
@@ -77,6 +79,20 @@ public class AdminCategoryController {
     })
     public BaseResponse<Boolean> deleteCategory(@Schema(description = "카테고리 PK") @PathVariable Long id) {
         adminCategoryService.deleteCategory(id);
+        return BaseResponse.from(true);
+    }
+
+    @PutMapping("/change-sort")
+    @Operation(summary = "카테고리 순서 변경", description = "카테고리 데이터를 List 로 전송")
+    @ApiErrorCodeExamples({
+            CommonExceptionResultMessage.AUTHENTICATION_FAILED
+            , CommonExceptionResultMessage.ACCESS_DENIED
+            , CommonExceptionResultMessage.VALID_FAIL
+            , CommonExceptionResultMessage.DB_FAIL
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<Boolean> changeSortOrder(@RequestBody List<CategorySortDto> list) {
+        adminCategoryService.changeSortOrder(list);
         return BaseResponse.from(true);
     }
 }

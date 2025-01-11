@@ -1,6 +1,7 @@
 package com.notice_board.api.admin.service.impl;
 
 import com.notice_board.api.admin.dto.CategoryDto;
+import com.notice_board.api.admin.dto.CategorySortDto;
 import com.notice_board.api.admin.service.AdminCategoryService;
 import com.notice_board.api.admin.vo.CategoryVo;
 import com.notice_board.common.component.CommonExceptionResultMessage;
@@ -11,10 +12,14 @@ import com.notice_board.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 
 @Service("adminCategoryService")
@@ -79,9 +84,52 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         categoryRepository.delete(category);
     }
 
+    @Override
+    public void changeSortOrder(List<CategorySortDto> list) {
+        List<Category> categoryList = categoryRepository.findAll();
+
+        Set<Long> sortOrderSet = new HashSet<>();
+
+        if (categoryList.size() != list.size()) {
+            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL, "모든 카테고리 데이터를 입력해주세요.");
+        }
+
+        for (CategorySortDto ct : list) {
+            Long id = ct.getId();
+            Long sortOrder = ct.getSortOrder();
+
+            if (id == null) {
+                throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "id", "카테고리 ID를 입력해주세요.");
+            }
+
+            if (sortOrder == null) {
+                throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "sortOrder", "정렬 순서를 입력해주세요.");
+            }
+
+            if (sortOrder > categoryList.size() || sortOrder < 1) {
+                throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "sortOrder", "올바른 정렬 순서를 입력해주세요.");
+            }
+
+            if (sortOrderSet.contains(sortOrder)) {
+                throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "sortOrder", sortOrder + "는 중복된 정렬 순서 입니다.");
+            }
+
+            Category category = categoryList.stream()
+                    .filter(c -> c.getId().equals(id))
+                    .findFirst()
+                    .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND,
+                            "카테고리 조회 실패: ID " + id + "에 해당하는 카테고리 없음"));
+
+            category.setSortOrder(sortOrder);
+            sortOrderSet.add(sortOrder);
+        }
+
+        categoryRepository.saveAll(categoryList);
+    }
+
     private Category getCategory(Long id) {
         if (id == null) {
-            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "id", "카테고리 PK를 입력해주세요.");
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "id", "카테고리 ID를 입력해주세요.");
         }
 
         return categoryRepository.findById(id)
