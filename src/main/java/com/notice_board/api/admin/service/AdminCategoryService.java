@@ -11,4 +11,6 @@ public interface AdminCategoryService {
     CategoryVo getCategoryDetail(Long id);
 
     void modifyCategory(CategoryDto categoryDto, Long id);
+
+    void deleteCategory(Long id);
 }

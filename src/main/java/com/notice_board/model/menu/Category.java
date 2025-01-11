@@ -12,7 +12,7 @@ import org.hibernate.annotations.SQLRestriction;
 
 @Entity @Setter @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "update category set deleted = true, sortOrder = null where id = ?")
+@SQLDelete(sql = "update category set deleted = true, sort_order = null where id = ?")
 @SQLRestriction("deleted = false")
 public class Category extends BaseTimeEntity {
 

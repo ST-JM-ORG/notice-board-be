@@ -64,4 +64,19 @@ public class AdminCategoryController {
         adminCategoryService.modifyCategory(categoryDto, id);
         return BaseResponse.from(true);
     }
+
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "카테고리 삭제")
+    @ApiErrorCodeExamples({
+            CommonExceptionResultMessage.AUTHENTICATION_FAILED
+            , CommonExceptionResultMessage.ACCESS_DENIED
+            , CommonExceptionResultMessage.VALID_FAIL
+            , CommonExceptionResultMessage.DB_FAIL
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<Boolean> deleteCategory(@Schema(description = "카테고리 PK") @PathVariable Long id) {
+        adminCategoryService.deleteCategory(id);
+        return BaseResponse.from(true);
+    }
 }

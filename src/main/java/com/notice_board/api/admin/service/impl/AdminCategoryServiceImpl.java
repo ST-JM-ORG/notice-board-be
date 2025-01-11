@@ -63,9 +63,20 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         }
 
         Category category = this.getCategory(id);
-
         category.setCategoryNm(categoryNm);
         categoryRepository.save(category);
+    }
+
+    @Override
+    public void deleteCategory(Long id) {
+        Category category = this.getCategory(id);
+
+        Long targetSortOrder = category.getSortOrder();
+
+        // 해당 카테고리보다 sortOrder 가 큰 카테고리들의 sortOrder 를 1씩 줄이기
+        categoryRepository.shiftSortOrderDown(targetSortOrder);
+
+        categoryRepository.delete(category);
     }
 
     private Category getCategory(Long id) {
