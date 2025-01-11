@@ -76,6 +76,10 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     public void deleteCategory(Long id) {
         Category category = this.getCategory(id);
 
+        if(!category.getMenuList().isEmpty()) {
+            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL, "카테고리를 사용 중인 메뉴가 있습니다.");
+        }
+
         Long targetSortOrder = category.getSortOrder();
 
         // 해당 카테고리보다 sortOrder 가 큰 카테고리들의 sortOrder 를 1씩 줄이기
