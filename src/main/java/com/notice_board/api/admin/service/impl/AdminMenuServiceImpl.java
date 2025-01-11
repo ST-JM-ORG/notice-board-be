@@ -51,7 +51,7 @@ public class AdminMenuServiceImpl implements AdminMenuService {
 
         Optional<Menu> topOrderBy = menuRepository.findTopByOrderByMenuOrderDesc();
         if(topOrderBy.isPresent()) {
-            menuOrder = topOrderBy.get().getMenuOrder();
+            menuOrder = topOrderBy.get().getMenuOrder() + 1;
         }
 
         Menu menu = modelMapper.map(menuDto, Menu.class);
