@@ -27,7 +27,10 @@ public class Menu extends BaseTimeEntity {
     private String menuCode; // 메뉴 코드
 
     @Column
-    private Long orderBy; // 순서 (삭제 시 null)
+    private String summary; // 메뉴 설명
+
+    @Column
+    private Long menuOrder; // 순서 (삭제 시 null)
 
     @Column(nullable = false)
     private Boolean deleted = false;

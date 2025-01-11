@@ -1,7 +1,11 @@
 package com.notice_board.api.admin.controller;
 
+import com.notice_board.api.admin.dto.MenuDto;
 import com.notice_board.api.admin.service.AdminMenuService;
+import com.notice_board.api.auth.vo.MemberVo;
+import com.notice_board.api.mypage.dto.EditPwDto;
 import com.notice_board.common.annotation.ApiErrorCodeExamples;
+import com.notice_board.common.annotation.AuthMember;
 import com.notice_board.common.component.BaseResponse;
 import com.notice_board.common.component.CommonExceptionResultMessage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/menu")
 @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
 @CrossOrigin("*")
-@Tag(name = "관리자 메뉴 관리 API", description = "관리자 메뉴 관리 API 모음.")
+@Tag(name = "최고 관리자 메뉴 관리 API", description = "최고 관리자 메뉴 관리 API 모음. (SUPER_ADMIN 접근 가능)")
 public class AdminMenuController {
 
     private final AdminMenuService adminMenuService;
@@ -37,6 +41,20 @@ public class AdminMenuController {
     public BaseResponse<Boolean> checkMenuCode(@RequestParam String menuCode) {
         adminMenuService.checkMenuCode(menuCode);
         return BaseResponse.from(true);
+    }
 
+    @PostMapping
+    @Operation(summary = "메뉴 등록", description = "`menuNm, menuCode` 필수")
+    @ApiErrorCodeExamples({
+            CommonExceptionResultMessage.AUTHENTICATION_FAILED
+            , CommonExceptionResultMessage.ACCESS_DENIED
+            , CommonExceptionResultMessage.DUPLICATE_FAIL
+            , CommonExceptionResultMessage.VALID_FAIL
+            , CommonExceptionResultMessage.DB_FAIL
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<Boolean> createMenu(@RequestBody MenuDto menuDto) {
+        adminMenuService.createMenu(menuDto);
+        return BaseResponse.from(true);
     }
 }
