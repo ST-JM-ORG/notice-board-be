@@ -6,6 +6,7 @@ import com.notice_board.common.annotation.ApiErrorCodeExamples;
 import com.notice_board.common.component.BaseResponse;
 import com.notice_board.common.component.CommonExceptionResultMessage;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,6 +34,21 @@ public class AdminCategoryController {
     })
     public BaseResponse<Boolean> createCategory(@RequestBody CategoryDto categoryDto) {
         adminCategoryService.createCategory(categoryDto);
+        return BaseResponse.from(true);
+    }
+
+
+    @PutMapping("/{id}")
+    @Operation(summary = "카테고리 수정", description = "`categoryNm` 필수")
+    @ApiErrorCodeExamples({
+            CommonExceptionResultMessage.AUTHENTICATION_FAILED
+            , CommonExceptionResultMessage.ACCESS_DENIED
+            , CommonExceptionResultMessage.VALID_FAIL
+            , CommonExceptionResultMessage.DB_FAIL
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<Boolean> modifyCategory(@RequestBody CategoryDto categoryDto, @Schema(description = "카테고리 PK") @PathVariable Long id) {
+        adminCategoryService.modifyCategory(categoryDto, id);
         return BaseResponse.from(true);
     }
 }

@@ -47,4 +47,18 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
             throw new CustomException(CommonExceptionResultMessage.DB_FAIL);
         }
     }
+
+    @Override
+    public void modifyCategory(CategoryDto categoryDto, Long id) {
+        String categoryNm = categoryDto.getCategoryNm();
+        if (StringUtils.isBlank(categoryNm)) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "categoryNm", "카테고리 명을 입력해주세요.");
+        }
+
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "카테고리 조회 실패: ID " + id + "에 해당하는 카테고리 없음"));
+
+        category.setCategoryNm(categoryNm);
+        categoryRepository.save(category);
+    }
 }

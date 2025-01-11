@@ -7,4 +7,6 @@ public interface AdminCategoryService {
 
     void createCategory(CategoryDto categoryDto);
 
+    void modifyCategory(CategoryDto categoryDto, Long id);
+
 }
