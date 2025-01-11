@@ -1,9 +1,13 @@
 package com.notice_board.model.commons;
 
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
+import com.notice_board.model.auth.Member;
+import jakarta.persistence.*;
 import lombok.Getter;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -14,11 +18,25 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 abstract public class BaseTimeEntity {
 
-    // Entity 가 생성되어 저장될 때 시간이 자동 저장됩니다.
+    // 생성 시 자동 저장
     @CreatedDate
     private LocalDateTime createdDate;
 
-    // 조회한 Entity 값을 변경할 때 시간이 자동 저장됩니다.
+    // 수정 시 자동 저장
     @LastModifiedDate
     private LocalDateTime modifiedDate;
+
+    // 생성자 ID
+    @CreatedBy
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by", updatable = false)
+    @NotFound(action = NotFoundAction.IGNORE)
+    private Member createdBy;
+
+    // 수정자 ID
+    @LastModifiedBy
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "modified_by")
+    @NotFound(action = NotFoundAction.IGNORE)
+    private Member modifiedBy;
 }

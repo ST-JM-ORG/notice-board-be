@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.Date;
 import java.util.TimeZone;
@@ -20,6 +21,7 @@ import java.util.TimeZone;
 )
 @ConfigurationPropertiesScan("com.notice_board")
 @EntityScan(basePackages = "com.notice_board.model")
+@EnableJpaAuditing
 public class NoticeBoardBeApplication {
     static {
         System.setProperty("spring.config.location", "classpath:config/application.yml");
