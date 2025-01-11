@@ -2,6 +2,7 @@ package com.notice_board.api.admin.service.impl;
 
 import com.notice_board.api.admin.dto.CategoryDto;
 import com.notice_board.api.admin.service.AdminCategoryService;
+import com.notice_board.api.admin.vo.CategoryVo;
 import com.notice_board.common.component.CommonExceptionResultMessage;
 import com.notice_board.common.exception.CustomException;
 import com.notice_board.common.exception.ValidException;
@@ -49,16 +50,30 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     }
 
     @Override
+    public CategoryVo getCategoryDetail(Long id) {
+        Category category = this.getCategory(id);
+        return CategoryVo.toVO(category);
+    }
+
+    @Override
     public void modifyCategory(CategoryDto categoryDto, Long id) {
         String categoryNm = categoryDto.getCategoryNm();
         if (StringUtils.isBlank(categoryNm)) {
             throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "categoryNm", "카테고리 명을 입력해주세요.");
         }
 
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "카테고리 조회 실패: ID " + id + "에 해당하는 카테고리 없음"));
+        Category category = this.getCategory(id);
 
         category.setCategoryNm(categoryNm);
         categoryRepository.save(category);
+    }
+
+    private Category getCategory(Long id) {
+        if (id == null) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "id", "카테고리 PK를 입력해주세요.");
+        }
+
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "카테고리 조회 실패: ID " + id + "에 해당하는 카테고리 없음"));
     }
 }
