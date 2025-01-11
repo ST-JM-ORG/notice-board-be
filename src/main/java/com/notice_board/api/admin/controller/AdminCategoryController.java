@@ -46,6 +46,7 @@ public class AdminCategoryController {
     @ApiErrorCodeExamples({
             CommonExceptionResultMessage.AUTHENTICATION_FAILED
             , CommonExceptionResultMessage.ACCESS_DENIED
+            , CommonExceptionResultMessage.NOT_FOUND
             , CommonExceptionResultMessage.VALID_FAIL
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
@@ -59,6 +60,7 @@ public class AdminCategoryController {
     @ApiErrorCodeExamples({
             CommonExceptionResultMessage.AUTHENTICATION_FAILED
             , CommonExceptionResultMessage.ACCESS_DENIED
+            , CommonExceptionResultMessage.NOT_FOUND
             , CommonExceptionResultMessage.VALID_FAIL
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
@@ -73,6 +75,7 @@ public class AdminCategoryController {
     @ApiErrorCodeExamples({
             CommonExceptionResultMessage.AUTHENTICATION_FAILED
             , CommonExceptionResultMessage.ACCESS_DENIED
+            , CommonExceptionResultMessage.NOT_FOUND
             , CommonExceptionResultMessage.VALID_FAIL
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
@@ -87,6 +90,7 @@ public class AdminCategoryController {
     @ApiErrorCodeExamples({
             CommonExceptionResultMessage.AUTHENTICATION_FAILED
             , CommonExceptionResultMessage.ACCESS_DENIED
+            , CommonExceptionResultMessage.NOT_FOUND
             , CommonExceptionResultMessage.VALID_FAIL
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL

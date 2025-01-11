@@ -9,6 +9,9 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity @Setter @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,4 +31,7 @@ public class Category extends BaseTimeEntity {
 
     @Column(nullable = false)
     private Boolean deleted = false;
+
+    @OneToMany(mappedBy = "category")
+    private final List<Menu> menuList = new ArrayList<>();
 }

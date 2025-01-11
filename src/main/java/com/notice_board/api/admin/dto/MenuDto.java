@@ -15,4 +15,7 @@ public class MenuDto {
 
     @Schema(description = "메뉴 설명", nullable = true)
     private String summary;
+
+    @Schema(description = "카테고리 ID (필수)")
+    private Long categoryId;
 }

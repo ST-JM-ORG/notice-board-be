@@ -48,6 +48,7 @@ public class AdminMenuController {
     @ApiErrorCodeExamples({
             CommonExceptionResultMessage.AUTHENTICATION_FAILED
             , CommonExceptionResultMessage.ACCESS_DENIED
+            , CommonExceptionResultMessage.NOT_FOUND
             , CommonExceptionResultMessage.DUPLICATE_FAIL
             , CommonExceptionResultMessage.VALID_FAIL
             , CommonExceptionResultMessage.DB_FAIL
