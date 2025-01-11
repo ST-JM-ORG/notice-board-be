@@ -42,7 +42,7 @@ public enum CommonExceptionResultMessage {
 	ACCESS_DENIED(HttpStatus.FORBIDDEN, "E103", "Access Denied."),
 	JWT_TOKEN_EXPIRED(HttpStatus.FORBIDDEN, "E104", "Token has expired."),
 	PW_MISMATCH(HttpStatus.BAD_REQUEST, "E106", "비밀번호가 일치하지않습니다."),
-	EMAIL_DUPLICATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "E110", "사용 중인 이메일입니다."),
+	DUPLICATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "E110", "사용 중인 데이터입니다."),
 
 	UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E999", "알 수 없는 오류");
 

@@ -33,7 +33,7 @@ public class AuthController {
             description = "이메일 데이터를 받아 중복된 이메일인지 확인",
             parameters = @Parameter(name = "email", description = "이메일")
     )
-    @ApiErrorCodeExample(CommonExceptionResultMessage.EMAIL_DUPLICATE_FAIL)
+    @ApiErrorCodeExample(CommonExceptionResultMessage.DUPLICATE_FAIL)
     public BaseResponse<Boolean> checkEmail(@RequestParam String email) {
         authService.checkEmail(email);
         return BaseResponse.from(true);
@@ -51,7 +51,7 @@ public class AuthController {
                             ))
             )
     )
-    @ApiErrorCodeExamples({CommonExceptionResultMessage.EMAIL_DUPLICATE_FAIL
+    @ApiErrorCodeExamples({CommonExceptionResultMessage.DUPLICATE_FAIL
             , CommonExceptionResultMessage.VALID_FAIL
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FILE_UPLOAD_FAIL

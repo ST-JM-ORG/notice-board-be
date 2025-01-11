@@ -56,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
 
         Optional<Member> member = memberRepository.findByEmail(email);
         if (member.isPresent()) {
-            throw new CustomException(CommonExceptionResultMessage.EMAIL_DUPLICATE_FAIL);
+            throw new ValidException(CommonExceptionResultMessage.DUPLICATE_FAIL, "email", "사용 중인 이메일입니다.");
         }
     }
 
