@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service("adminCategoryService")
@@ -33,13 +34,22 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     private final ModelMapper modelMapper;
 
     @Override
+    public List<CategoryVo> getCategoryList() {
+        List<Category> categoryList = categoryRepository.findAllByOrderBySortOrderAsc();
+
+        return categoryList.stream()
+                .map(c -> CategoryVo.toVO(c))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void createCategory(CategoryDto categoryDto) {
 
         if (StringUtils.isBlank(categoryDto.getCategoryNm())) {
             throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "categoryNm", "카테고리 명을 입력해주세요.");
         }
 
-        long sortOrder  = categoryRepository.findTopByOrderBySortOrderDesc()
+        long sortOrder = categoryRepository.findTopByOrderBySortOrderDesc()
                 .map(Category::getSortOrder)
                 .orElse(0L) + 1;
 
@@ -75,7 +85,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     public void deleteCategory(Long id) {
         Category category = this.getCategory(id);
 
-        if(!category.getMenuList().isEmpty()) {
+        if (!category.getMenuList().isEmpty()) {
             throw new CustomException(CommonExceptionResultMessage.VALID_FAIL, "카테고리를 사용 중인 메뉴가 있습니다.");
         }
 

@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface AdminCategoryService {
 
+    List<CategoryVo> getCategoryList();
+
     void createCategory(CategoryDto categoryDto);
 
     CategoryVo getCategoryDetail(Long id);
