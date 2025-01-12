@@ -38,6 +38,10 @@ public class AdminMenuServiceImpl implements AdminMenuService {
             throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "menuCode", "메뉴 코드를 입력해주세요.");
         }
 
+        if (!menuCode.matches("^[a-zA-Z_]+$")) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "menuCode", "메뉴 코드는 영어와 '_'만 사용할 수 있습니다");
+        }
+
         Optional<Menu> menu = menuRepository.findByMenuCode(menuCode);
 
         if (menu.isPresent()) {
