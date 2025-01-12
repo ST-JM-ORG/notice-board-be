@@ -17,6 +17,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.Optional;
 
 
@@ -57,14 +58,21 @@ public class AdminMenuServiceImpl implements AdminMenuService {
             throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "categoryId", "카테고리를 선택해주세요.");
         }
 
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "카테고리 조회 실패: ID " + categoryId + "에 해당하는 카테고리 없음"));
+        Category category = null;
+        long sortOrder;
 
-        long sortOrder = 1;
+        if (categoryId != 0) { // 미선택이 아닐 경우
+            category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "카테고리 조회 실패: ID " + categoryId + "에 해당하는 카테고리 없음"));
 
-        Optional<Menu> topOrderBy = menuRepository.findTopByOrderBySortOrderDesc();
-        if (topOrderBy.isPresent()) {
-            sortOrder = topOrderBy.get().getSortOrder() + 1;
+            sortOrder = category.getMenuList().stream()
+                    .map(Menu::getSortOrder)
+                    .max(Comparator.naturalOrder())
+                    .orElse(0L) + 1;
+        } else { // 카테고리 미선택
+            sortOrder = menuRepository.findTopByCategoryIsNullOrderBySortOrderDesc()
+                    .map(Menu::getSortOrder)
+                    .orElse(0L) + 1;
         }
 
         Menu menu = modelMapper.map(menuDto, Menu.class);

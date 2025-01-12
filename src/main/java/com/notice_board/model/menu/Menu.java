@@ -34,7 +34,7 @@ public class Menu extends BaseTimeEntity {
     private Long sortOrder; // 순서 (삭제 시 null)
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id")
     private Category category;
 
     @Column(nullable = false)

@@ -44,7 +44,7 @@ public class AdminMenuController {
     }
 
     @PostMapping
-    @Operation(summary = "메뉴 등록", description = "`menuNm, menuCode` 필수")
+    @Operation(summary = "메뉴 등록", description = "`menuNm, menuCode, categoryId` 필수 categoryId가 0일 경우 미선택")
     @ApiErrorCodeExamples({
             CommonExceptionResultMessage.AUTHENTICATION_FAILED
             , CommonExceptionResultMessage.ACCESS_DENIED

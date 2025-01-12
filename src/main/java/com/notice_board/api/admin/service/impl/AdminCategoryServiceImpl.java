@@ -8,6 +8,7 @@ import com.notice_board.common.component.CommonExceptionResultMessage;
 import com.notice_board.common.exception.CustomException;
 import com.notice_board.common.exception.ValidException;
 import com.notice_board.model.menu.Category;
+import com.notice_board.model.menu.Menu;
 import com.notice_board.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -38,11 +39,9 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
             throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "categoryNm", "카테고리 명을 입력해주세요.");
         }
 
-        long sortOrder = 1;
-        Optional<Category> topOrderBy = categoryRepository.findTopByOrderBySortOrderDesc();
-        if (topOrderBy.isPresent()) {
-            sortOrder = topOrderBy.get().getSortOrder() + 1;
-        }
+        long sortOrder  = categoryRepository.findTopByOrderBySortOrderDesc()
+                .map(Category::getSortOrder)
+                .orElse(0L) + 1;
 
         Category category = modelMapper.map(categoryDto, Category.class);
         category.setSortOrder(sortOrder);
