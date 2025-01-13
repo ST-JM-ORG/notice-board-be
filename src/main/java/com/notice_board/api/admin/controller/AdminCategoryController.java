@@ -27,7 +27,6 @@ public class AdminCategoryController {
 
     private final AdminCategoryService adminCategoryService;
 
-    // TODO 목록 조회 만들기
     @GetMapping
     @Operation(summary = "카테고리 목록 조회", description = "sortOrder 순으로 정렬 (ASC)")
     @ApiErrorCodeExamples({

@@ -1,8 +1,6 @@
 package com.notice_board.api.admin.controller;
 
-import com.notice_board.api.admin.dto.CategorySortDto;
-import com.notice_board.api.admin.dto.MenuDto;
-import com.notice_board.api.admin.dto.MenuSortDto;
+import com.notice_board.api.admin.dto.*;
 import com.notice_board.api.admin.service.AdminMenuService;
 import com.notice_board.api.admin.vo.MenuVo;
 import com.notice_board.common.annotation.ApiErrorCodeExamples;
@@ -13,8 +11,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -26,6 +27,17 @@ import org.springframework.web.bind.annotation.*;
 public class AdminMenuController {
 
     private final AdminMenuService adminMenuService;
+
+    @GetMapping
+    @Operation(summary = "메뉴 목록 조회", description = "categoryId가 0일 경우 미선택 메뉴 조회, null 일 경우 모든 메뉴 조회, sortOrder 순으로 정렬 (ASC)")
+    @ApiErrorCodeExamples({
+            CommonExceptionResultMessage.AUTHENTICATION_FAILED
+            , CommonExceptionResultMessage.ACCESS_DENIED
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<List<MenuVo>> getMenuList(@ParameterObject MenuSearchReqDto reqDto) {
+        return BaseResponse.from(adminMenuService.getMenuList(reqDto));
+    }
 
     @GetMapping("/code-check")
     @Operation(

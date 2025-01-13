@@ -1,10 +1,8 @@
 package com.notice_board.api.admin.service.impl;
 
-import com.notice_board.api.admin.dto.CategorySortDto;
-import com.notice_board.api.admin.dto.MenuDto;
-import com.notice_board.api.admin.dto.MenuSortDto;
-import com.notice_board.api.admin.dto.MenuSortListDto;
+import com.notice_board.api.admin.dto.*;
 import com.notice_board.api.admin.service.AdminMenuService;
+import com.notice_board.api.admin.vo.CategoryVo;
 import com.notice_board.api.admin.vo.MenuVo;
 import com.notice_board.common.component.CommonExceptionResultMessage;
 import com.notice_board.common.exception.CustomException;
@@ -20,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service("adminMenuService")
@@ -176,18 +175,9 @@ public class AdminMenuServiceImpl implements AdminMenuService {
         Set<Long> sortOrderSet = new HashSet<>();
         List<MenuSortListDto> menuSortList = menuSortDto.getMenuSortList();
 
-        List<Menu> menuList;
-        if (categoryId != 0) {
-            Category category = categoryRepository.findById(categoryId)
-                    .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "카테고리 조회 실패: ID " + categoryId + "에 해당하는 카테고리 없음"));
-
-            menuList = category.getMenuList();
-        } else {
-            menuList = menuRepository.findAllByCategory(null);
-        }
-
-        if (menuList.size() != menuSortList.size()) {
-            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL, "모든 메뉴 데이터를 입력해주세요.");
+        List<Menu> menuList = this.getMenuListByCategoryId(categoryId);
+        if (!menuSortList.stream().allMatch(dto -> menuList.stream().anyMatch(menu -> menu.getId().equals(dto.getId())))) {
+            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL, "메뉴 데이터가 일치하지 않습니다.");
         }
 
         for (MenuSortListDto data : menuSortList) {
@@ -214,7 +204,7 @@ public class AdminMenuServiceImpl implements AdminMenuService {
                     .filter(c -> c.getId().equals(id))
                     .findFirst()
                     .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND,
-                            "메늎 조회 실패: ID " + id + "에 해당하는 메늎 없음"));
+                            "메뉴 조회 실패: ID " + id + "에 해당하는 메뉴 없음"));
 
             menu.setSortOrder(sortOrder);
             sortOrderSet.add(sortOrder);
@@ -223,7 +213,20 @@ public class AdminMenuServiceImpl implements AdminMenuService {
         menuRepository.saveAll(menuList);
     }
 
-    private void validMenuCode (String menuCode) {
+    @Override
+    public List<MenuVo> getMenuList(MenuSearchReqDto reqDto) {
+        Long categoryId = reqDto.getCategoryId();
+
+        List<Menu> menuList = this.getMenuListByCategoryId(categoryId);
+
+        menuList.sort(Comparator.comparing(Menu::getSortOrder));
+
+        return menuList.stream()
+                .map(MenuVo::toVO)
+                .collect(Collectors.toList());
+    }
+
+    private void validMenuCode(String menuCode) {
         if (StringUtils.isBlank(menuCode)) {
             throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "menuCode", "메뉴 코드를 입력해주세요.");
         }
@@ -231,6 +234,24 @@ public class AdminMenuServiceImpl implements AdminMenuService {
         if (!menuCode.matches("^[a-zA-Z_]+$")) {
             throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "menuCode", "메뉴 코드는 영어와 '_'만 사용할 수 있습니다");
         }
+    }
+
+    private List<Menu> getMenuListByCategoryId(Long categoryId) {
+        // categoryId가 null인 경우, 모든 메뉴를 가져옴
+        if (categoryId == null) {
+            return menuRepository.findAll();
+        }
+
+        // categoryId가 0인 경우, category가 null인 메뉴를 가져옴
+        if (categoryId == 0) {
+            return menuRepository.findAllByCategory(null);
+        }
+
+        // categoryId가 유효한 경우, 해당 카테고리의 메뉴를 가져옴
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND,
+                        "카테고리 조회 실패: ID " + categoryId + "에 해당하는 카테고리 없음"));
+        return category.getMenuList();
     }
 
     private Menu getMenu(Long id) {

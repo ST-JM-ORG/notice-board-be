@@ -8,6 +8,7 @@ import com.notice_board.common.component.CommonExceptionResultMessage;
 import com.notice_board.common.exception.CustomException;
 import com.notice_board.common.exception.ValidException;
 import com.notice_board.model.menu.Category;
+import com.notice_board.model.menu.Menu;
 import com.notice_board.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +36,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         List<Category> categoryList = categoryRepository.findAllByOrderBySortOrderAsc();
 
         return categoryList.stream()
-                .map(c -> CategoryVo.toVO(c))
+                .map(CategoryVo::toVO)
                 .collect(Collectors.toList());
     }
 
@@ -100,8 +101,8 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
 
         Set<Long> sortOrderSet = new HashSet<>();
 
-        if (categoryList.size() != list.size()) {
-            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL, "모든 카테고리 데이터를 입력해주세요.");
+        if (!categoryList.stream().allMatch(dto -> list.stream().anyMatch(category -> category.getId().equals(dto.getId())))) {
+            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL, "카테고리 데이터가 일치하지 않습니다.");
         }
 
         for (CategorySortDto ct : list) {
