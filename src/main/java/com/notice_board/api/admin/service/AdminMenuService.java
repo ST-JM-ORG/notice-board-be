@@ -9,4 +9,6 @@ public interface AdminMenuService {
     void createMenu(MenuDto menuDto);
 
     MenuVo getMenuDetail(Long id);
+
+    void modifyMenu(MenuDto menuDto, Long id);
 }

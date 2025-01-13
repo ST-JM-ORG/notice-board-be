@@ -8,6 +8,7 @@ import com.notice_board.common.component.BaseResponse;
 import com.notice_board.common.component.CommonExceptionResultMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -69,5 +70,20 @@ public class AdminMenuController {
     })
     public BaseResponse<MenuVo> getMenuDetail(@PathVariable Long id) {
         return BaseResponse.from(adminMenuService.getMenuDetail(id));
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "메뉴 수정", description = "`menuNm, menuCode, categoryId` 필수 `categoryId`가 0일 경우 미선택")
+    @ApiErrorCodeExamples({
+            CommonExceptionResultMessage.AUTHENTICATION_FAILED
+            , CommonExceptionResultMessage.ACCESS_DENIED
+            , CommonExceptionResultMessage.NOT_FOUND
+            , CommonExceptionResultMessage.VALID_FAIL
+            , CommonExceptionResultMessage.DB_FAIL
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<Boolean> modifyMenu(@RequestBody MenuDto menuDto, @Schema(description = "메뉴 PK") @PathVariable Long id) {
+        adminMenuService.modifyMenu(menuDto, id);
+        return BaseResponse.from(true);
     }
 }

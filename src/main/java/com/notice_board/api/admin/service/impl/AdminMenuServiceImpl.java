@@ -89,6 +89,67 @@ public class AdminMenuServiceImpl implements AdminMenuService {
         return MenuVo.toVO(menu);
     }
 
+    @Override
+    public void modifyMenu(MenuDto menuDto, Long id) {
+        String newMenuCode = menuDto.getMenuCode();
+        this.validMenuCode(newMenuCode);
+
+        if (StringUtils.isBlank(menuDto.getMenuNm())) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "menuNm", "메뉴 이름을 입력해주세요.");
+        }
+
+        Long newCategoryId = menuDto.getCategoryId();
+        if (newCategoryId == null) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "categoryId", "카테고리를 선택해주세요.");
+        }
+
+        // 기존 메뉴 조회
+        Menu menu = this.getMenu(id);
+        Category originCategory = menu.getCategory();
+
+        String originMenuCode = menu.getMenuCode();
+        Long originCategoryId = originCategory == null ? 0 : originCategory.getId();
+
+        menu.setMenuNm(menuDto.getMenuNm());
+
+        // 메뉴 코드가 바꼈을 경우
+        if (!StringUtils.equals(originMenuCode, newMenuCode)) {
+            this.checkMenuCode(newMenuCode);
+            menu.setMenuCode(newMenuCode);
+        }
+
+        // 카테고리가 변경되었을 경우
+        if (!originCategoryId.equals(newCategoryId)) {
+            Category category = null;
+            long originSortOrder = menu.getSortOrder();
+            long sortOrder;
+
+            if (newCategoryId != 0) { // 미선택이 아닐 경우
+                category = categoryRepository.findById(newCategoryId)
+                        .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "카테고리 조회 실패: ID " + newCategoryId + "에 해당하는 카테고리 없음"));
+
+                sortOrder = category.getMenuList().stream()
+                        .map(Menu::getSortOrder)
+                        .max(Comparator.naturalOrder())
+                        .orElse(0L) + 1;
+            } else { // 카테고리 미선택
+                sortOrder = menuRepository.findTopByCategoryIsNullOrderBySortOrderDesc()
+                        .map(Menu::getSortOrder)
+                        .orElse(0L) + 1;
+            }
+
+            menu.setSortOrder(sortOrder);
+            menu.setCategory(category);
+
+            // 기존 카테고리에서 메뉴보다 sortOrder 가 큰 메뉴들의 sortOrder 를 1씩 줄이기
+            menuRepository.shiftSortOrderDown(originSortOrder, originCategory);
+        }
+
+        menu.setSummary(menuDto.getSummary());
+
+        menuRepository.save(menu);
+    }
+
     private void validMenuCode (String menuCode) {
         if (StringUtils.isBlank(menuCode)) {
             throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "menuCode", "메뉴 코드를 입력해주세요.");
