@@ -1,6 +1,9 @@
 package com.notice_board.api.admin.service.impl;
 
+import com.notice_board.api.admin.dto.CategorySortDto;
 import com.notice_board.api.admin.dto.MenuDto;
+import com.notice_board.api.admin.dto.MenuSortDto;
+import com.notice_board.api.admin.dto.MenuSortListDto;
 import com.notice_board.api.admin.service.AdminMenuService;
 import com.notice_board.api.admin.vo.MenuVo;
 import com.notice_board.common.component.CommonExceptionResultMessage;
@@ -16,8 +19,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service("adminMenuService")
@@ -161,6 +163,64 @@ public class AdminMenuServiceImpl implements AdminMenuService {
         menuRepository.shiftSortOrderDown(targetSortOrder, category);
 
         menuRepository.delete(menu);
+    }
+
+    @Override
+    public void changeSortOrder(MenuSortDto menuSortDto) {
+        Long categoryId = menuSortDto.getCategoryId();
+
+        if (categoryId == null) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "categoryId", "카테고리 ID를 입력해주세요.");
+        }
+
+        Set<Long> sortOrderSet = new HashSet<>();
+        List<MenuSortListDto> menuSortList = menuSortDto.getMenuSortList();
+
+        List<Menu> menuList;
+        if (categoryId != 0) {
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "카테고리 조회 실패: ID " + categoryId + "에 해당하는 카테고리 없음"));
+
+            menuList = category.getMenuList();
+        } else {
+            menuList = menuRepository.findAllByCategory(null);
+        }
+
+        if (menuList.size() != menuSortList.size()) {
+            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL, "모든 메뉴 데이터를 입력해주세요.");
+        }
+
+        for (MenuSortListDto data : menuSortList) {
+            Long id = data.getId();
+            Long sortOrder = data.getSortOrder();
+
+            if (id == null) {
+                throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "id", "메뉴 ID를 입력해주세요.");
+            }
+
+            if (sortOrder == null) {
+                throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "sortOrder", "정렬 순서를 입력해주세요.");
+            }
+
+            if (sortOrder > menuList.size() || sortOrder < 1) {
+                throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "sortOrder", "올바른 정렬 순서를 입력해주세요.");
+            }
+
+            if (sortOrderSet.contains(sortOrder)) {
+                throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "sortOrder", sortOrder + "는 중복된 정렬 순서 입니다.");
+            }
+
+            Menu menu = menuList.stream()
+                    .filter(c -> c.getId().equals(id))
+                    .findFirst()
+                    .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND,
+                            "메늎 조회 실패: ID " + id + "에 해당하는 메늎 없음"));
+
+            menu.setSortOrder(sortOrder);
+            sortOrderSet.add(sortOrder);
+        }
+
+        menuRepository.saveAll(menuList);
     }
 
     private void validMenuCode (String menuCode) {

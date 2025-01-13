@@ -1,6 +1,7 @@
 package com.notice_board.api.admin.service;
 
 import com.notice_board.api.admin.dto.MenuDto;
+import com.notice_board.api.admin.dto.MenuSortDto;
 import com.notice_board.api.admin.vo.MenuVo;
 
 public interface AdminMenuService {
@@ -13,4 +14,6 @@ public interface AdminMenuService {
     void modifyMenu(MenuDto menuDto, Long id);
 
     void deleteMenu(Long id);
+
+    void changeSortOrder(MenuSortDto menuSortDto);
 }

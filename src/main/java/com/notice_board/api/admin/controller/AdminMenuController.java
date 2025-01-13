@@ -1,6 +1,8 @@
 package com.notice_board.api.admin.controller;
 
+import com.notice_board.api.admin.dto.CategorySortDto;
 import com.notice_board.api.admin.dto.MenuDto;
+import com.notice_board.api.admin.dto.MenuSortDto;
 import com.notice_board.api.admin.service.AdminMenuService;
 import com.notice_board.api.admin.vo.MenuVo;
 import com.notice_board.common.annotation.ApiErrorCodeExamples;
@@ -99,6 +101,21 @@ public class AdminMenuController {
     })
     public BaseResponse<Boolean> deleteMenu(@Schema(description = "메뉴 PK") @PathVariable Long id) {
         adminMenuService.deleteMenu(id);
+        return BaseResponse.from(true);
+    }
+
+    @PutMapping("/change-sort")
+    @Operation(summary = "메뉴 순서 변경", description = "categoryId, 메뉴 데이터를 List 로 전송")
+    @ApiErrorCodeExamples({
+            CommonExceptionResultMessage.AUTHENTICATION_FAILED
+            , CommonExceptionResultMessage.ACCESS_DENIED
+            , CommonExceptionResultMessage.NOT_FOUND
+            , CommonExceptionResultMessage.VALID_FAIL
+            , CommonExceptionResultMessage.DB_FAIL
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<Boolean> changeSortOrder(@RequestBody MenuSortDto menuSortDto) {
+        adminMenuService.changeSortOrder(menuSortDto);
         return BaseResponse.from(true);
     }
 }

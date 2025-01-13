@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -22,4 +23,5 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
             "AND m.deleted = false")
     void shiftSortOrderDown(@Param("sortOrder") Long sortOrder, @Param("category") Category category);
 
+    List<Menu> findAllByCategory(Category category);
 }
