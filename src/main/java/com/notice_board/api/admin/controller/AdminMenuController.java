@@ -2,10 +2,8 @@ package com.notice_board.api.admin.controller;
 
 import com.notice_board.api.admin.dto.MenuDto;
 import com.notice_board.api.admin.service.AdminMenuService;
-import com.notice_board.api.auth.vo.MemberVo;
-import com.notice_board.api.mypage.dto.EditPwDto;
+import com.notice_board.api.admin.vo.MenuVo;
 import com.notice_board.common.annotation.ApiErrorCodeExamples;
-import com.notice_board.common.annotation.AuthMember;
 import com.notice_board.common.component.BaseResponse;
 import com.notice_board.common.component.CommonExceptionResultMessage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,7 +42,7 @@ public class AdminMenuController {
     }
 
     @PostMapping
-    @Operation(summary = "메뉴 등록", description = "`menuNm, menuCode, categoryId` 필수 categoryId가 0일 경우 미선택")
+    @Operation(summary = "메뉴 등록", description = "`menuNm, menuCode, categoryId` 필수 `categoryId`가 0일 경우 미선택")
     @ApiErrorCodeExamples({
             CommonExceptionResultMessage.AUTHENTICATION_FAILED
             , CommonExceptionResultMessage.ACCESS_DENIED
@@ -57,5 +55,19 @@ public class AdminMenuController {
     public BaseResponse<Boolean> createMenu(@RequestBody MenuDto menuDto) {
         adminMenuService.createMenu(menuDto);
         return BaseResponse.from(true);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "메뉴 상세 조회")
+    @ApiErrorCodeExamples({
+            CommonExceptionResultMessage.AUTHENTICATION_FAILED
+            , CommonExceptionResultMessage.ACCESS_DENIED
+            , CommonExceptionResultMessage.NOT_FOUND
+            , CommonExceptionResultMessage.VALID_FAIL
+            , CommonExceptionResultMessage.DB_FAIL
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<MenuVo> getMenuDetail(@PathVariable Long id) {
+        return BaseResponse.from(adminMenuService.getMenuDetail(id));
     }
 }

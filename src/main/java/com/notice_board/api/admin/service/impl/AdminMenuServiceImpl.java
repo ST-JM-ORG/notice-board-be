@@ -1,9 +1,8 @@
 package com.notice_board.api.admin.service.impl;
 
 import com.notice_board.api.admin.dto.MenuDto;
-import com.notice_board.api.admin.service.AdminCategoryService;
 import com.notice_board.api.admin.service.AdminMenuService;
-import com.notice_board.api.admin.vo.CategoryVo;
+import com.notice_board.api.admin.vo.MenuVo;
 import com.notice_board.common.component.CommonExceptionResultMessage;
 import com.notice_board.common.exception.CustomException;
 import com.notice_board.common.exception.ValidException;
@@ -34,13 +33,7 @@ public class AdminMenuServiceImpl implements AdminMenuService {
 
     @Override
     public void checkMenuCode(String menuCode) {
-        if (StringUtils.isBlank(menuCode)) {
-            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "menuCode", "메뉴 코드를 입력해주세요.");
-        }
-
-        if (!menuCode.matches("^[a-zA-Z_]+$")) {
-            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "menuCode", "메뉴 코드는 영어와 '_'만 사용할 수 있습니다");
-        }
+        this.validMenuCode(menuCode);
 
         Optional<Menu> menu = menuRepository.findByMenuCode(menuCode);
 
@@ -88,5 +81,30 @@ public class AdminMenuServiceImpl implements AdminMenuService {
         if (menu.getId() == null) {
             throw new CustomException(CommonExceptionResultMessage.DB_FAIL);
         }
+    }
+
+    @Override
+    public MenuVo getMenuDetail(Long id) {
+        Menu menu = this.getMenu(id);
+        return MenuVo.toVO(menu);
+    }
+
+    private void validMenuCode (String menuCode) {
+        if (StringUtils.isBlank(menuCode)) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "menuCode", "메뉴 코드를 입력해주세요.");
+        }
+
+        if (!menuCode.matches("^[a-zA-Z_]+$")) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "menuCode", "메뉴 코드는 영어와 '_'만 사용할 수 있습니다");
+        }
+    }
+
+    private Menu getMenu(Long id) {
+        if (id == null) {
+            throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "id", "메뉴 ID를 입력해주세요.");
+        }
+
+        return menuRepository.findById(id)
+                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "메뉴 조회 실패: ID " + id + "에 해당하는 메뉴 없음"));
     }
 }
