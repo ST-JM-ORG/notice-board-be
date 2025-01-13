@@ -150,6 +150,19 @@ public class AdminMenuServiceImpl implements AdminMenuService {
         menuRepository.save(menu);
     }
 
+    @Override
+    public void deleteMenu(Long id) {
+        Menu menu = this.getMenu(id);
+
+        Category category = menu.getCategory();
+        Long targetSortOrder = menu.getSortOrder();
+
+        // 기존 카테고리에서 메뉴보다 sortOrder 가 큰 메뉴들의 sortOrder 를 1씩 줄이기
+        menuRepository.shiftSortOrderDown(targetSortOrder, category);
+
+        menuRepository.delete(menu);
+    }
+
     private void validMenuCode (String menuCode) {
         if (StringUtils.isBlank(menuCode)) {
             throw new ValidException(CommonExceptionResultMessage.VALID_FAIL, "menuCode", "메뉴 코드를 입력해주세요.");

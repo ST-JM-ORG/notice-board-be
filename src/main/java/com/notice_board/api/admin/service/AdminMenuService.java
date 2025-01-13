@@ -11,4 +11,6 @@ public interface AdminMenuService {
     MenuVo getMenuDetail(Long id);
 
     void modifyMenu(MenuDto menuDto, Long id);
+
+    void deleteMenu(Long id);
 }

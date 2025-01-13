@@ -86,4 +86,19 @@ public class AdminMenuController {
         adminMenuService.modifyMenu(menuDto, id);
         return BaseResponse.from(true);
     }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "메뉴 삭제")
+    @ApiErrorCodeExamples({
+            CommonExceptionResultMessage.AUTHENTICATION_FAILED
+            , CommonExceptionResultMessage.ACCESS_DENIED
+            , CommonExceptionResultMessage.NOT_FOUND
+            , CommonExceptionResultMessage.VALID_FAIL
+            , CommonExceptionResultMessage.DB_FAIL
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<Boolean> deleteMenu(@Schema(description = "메뉴 PK") @PathVariable Long id) {
+        adminMenuService.deleteMenu(id);
+        return BaseResponse.from(true);
+    }
 }
