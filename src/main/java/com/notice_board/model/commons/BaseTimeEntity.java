@@ -20,6 +20,7 @@ abstract public class BaseTimeEntity {
 
     // 생성 시 자동 저장
     @CreatedDate
+    @Column(nullable = false)
     private LocalDateTime createdDate;
 
     // 수정 시 자동 저장
@@ -29,14 +30,12 @@ abstract public class BaseTimeEntity {
     // 생성자 ID
     @CreatedBy
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by", updatable = false)
-    @NotFound(action = NotFoundAction.IGNORE)
+    @JoinColumn(name = "created_by", updatable = false, nullable = false)
     private Member createdBy;
 
     // 수정자 ID
     @LastModifiedBy
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "modified_by")
-    @NotFound(action = NotFoundAction.IGNORE)
     private Member modifiedBy;
 }

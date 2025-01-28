@@ -1,4 +1,4 @@
-package com.notice_board.model.board;
+package com.notice_board.model.post;
 
 import com.notice_board.model.auth.Member;
 import com.notice_board.model.commons.BaseTimeEntity;
@@ -8,6 +8,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity @Setter @Getter
@@ -36,10 +39,10 @@ public class Post extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String contents;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id", nullable = false)
-    private Member writer;
-
     @Column(nullable = false)
     private Boolean deleted = false;
+
+    @OneToMany(mappedBy = "post")
+    @OrderBy("id ASC")
+    private final List<PostAttachment> attachmentList = new ArrayList<>();
 }
