@@ -3,8 +3,6 @@ package com.notice_board.model.commons;
 import com.notice_board.model.auth.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;

@@ -2,9 +2,7 @@ package com.notice_board.model.commons;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.EntityListeners;
 import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -27,7 +25,6 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Getter @EqualsAndHashCode
 @Setter @AllArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
 public class File {
     @NonNull
     @Column(nullable = false)

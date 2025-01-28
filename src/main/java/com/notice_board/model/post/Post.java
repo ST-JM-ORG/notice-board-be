@@ -1,6 +1,5 @@
 package com.notice_board.model.post;
 
-import com.notice_board.model.auth.Member;
 import com.notice_board.model.commons.BaseTimeEntity;
 import com.notice_board.model.menu.Menu;
 import jakarta.persistence.*;
